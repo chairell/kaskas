@@ -1,0 +1,41 @@
+name: Snapshot promo pages
+
+# Manual helper: saves each bank's raw promo page so the parsers can be checked against real markup.
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download pages
+        run: |
+          mkdir pages
+          UA="Mozilla/5.0 (compatible; KaskasPromoBot/1.0; +https://github.com/chairell/kaskas)"
+          while read name url; do
+            curl -sSL -m 30 -A "$UA" -o "pages/$name.html" -w "$name %{http_code} %{size_download}\n" "$url" || echo "$name failed"
+          done <<'LIST'
+          bpi https://www.bpi.com.ph/personal/rewards-and-promotions/promos.html
+          bpi-cc https://www.bpi.com.ph/creditcards/promos
+          rcbc https://rcbccredit.com/promos
+          eastwest https://www.eastwestbanker.com/promos?page=0
+          maya https://www.maya.ph/deals
+          pnb https://www.pnb.com.ph/index.php/pnb-credit-card-promos
+          bdo https://www.deals.bdo.com.ph/home
+          metrobank https://www.metrobank.com.ph/promos
+          unionbank https://www.unionbankph.com/promos
+          unionbank-cc https://www.unionbankph.com/cards/credit-card
+          maribank https://www.maribank.ph/
+          LIST
+          # BDO's deals site is an Angular app; keep its main bundle to find the data endpoint.
+          js=$(grep -o 'main\.[a-f0-9]*\.js' pages/bdo.html | head -1)
+          [ -n "$js" ] && curl -sSL -m 30 -A "$UA" -o pages/bdo-main.js "https://www.deals.bdo.com.ph/$js"
+      - name: Push to the snapshots branch
+        run: |
+          cd pages
+          git init -q -b snapshots
+          git config user.name "kaskas-bot"; git config user.email "kaskas-bot@users.noreply.github.com"
+          git add -A && git commit -q -m "Snapshot $(date -u +%FT%TZ)"
+          git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" snapshots
