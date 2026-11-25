@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kaskas! — Saan ka kakaskas?</title>
+<meta name="description" content="Alamin kung aling card mo ang pinaka-sulit i-kaskas, bago ka magbayad.">
+<meta name="theme-color" content="#ff4d2e">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Kaskas!">
+<meta property="og:title" content="Kaskas! — Saan ka kakaskas?">
+<meta property="og:description" content="Alamin kung aling card mo ang pinaka-sulit i-kaskas, bago ka magbayad.">
+<meta property="og:image" content="og.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{--hot:#ff4d2e;--ink:#1b1230;--sun:#ffd23f;--bg:#fff8ef;--mut:#6b6280}
+*{box-sizing:border-box}
+body{font-family:system-ui,-apple-system,sans-serif;margin:0;background:var(--bg);color:var(--ink)}
+header{background:var(--hot);color:#fff;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center}
+header h1{margin:0;font-size:26px;font-weight:900;letter-spacing:-1px}
+header button{width:auto;background:#fff3;color:#fff;margin:0;padding:8px 12px;font-size:14px}
+main{padding:14px;max-width:520px;margin:auto}
+.card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 0 var(--ink)}
+label{font-weight:600;font-size:14px}
+input,button{font-size:17px;padding:12px;border-radius:12px;border:2px solid var(--ink);width:100%;margin-top:6px;font-family:inherit}
+button{background:var(--ink);color:#fff;font-weight:700;cursor:pointer}
+.big{background:var(--hot);border-color:var(--hot);font-size:19px}
+.ghost{background:#fff;color:var(--ink)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chips button{width:auto;margin:0;padding:8px 12px;font-size:14px;background:#fff;color:var(--ink)}
+.chips button.on{background:var(--sun)}
+.win{border:3px solid var(--hot)}
+.badge{display:inline-block;background:var(--sun);border-radius:8px;padding:2px 8px;font-size:13px;font-weight:800}
+.small{font-size:13px;color:var(--mut)}
+table{width:100%;font-size:14px;border-collapse:collapse;margin-top:6px}td{padding:4px 0;vertical-align:top}td:first-child{color:var(--mut);width:38%}
+#guide,#setup{display:none}
+</style></head><body>
+<header><h1>Kaskas!</h1><button onclick="show('setup')">💳 Cards ko</button></header>
+<main>
+<div id="guide" class="card"><b>📲 Gawin mong app 'to!</b><p class="small" id="gtext"></p><button onclick="dismissGuide()">Sige, gets!</button></div>
+
+<div id="pos">
+ <div class="card">
+  <label>Saan ka bibili?<input id="merchant" placeholder="hal. Jollibee, SM, Shell, Shopee" oninput="merchantHint()"></label>
+  <div class="chips" id="cats"></div>
+  <label style="display:block;margin-top:12px">Magkano? (₱)<input id="amt" type="number" inputmode="decimal" placeholder="0"></label>
+  <div class="chips" id="quick"></div>
+  <button class="big" onclick="compare()">Saan ako kakaskas? 💳</button>
+  <button class="ghost" onclick="locHint()">📍 Hulaan ang shop gamit ang location (optional)</button>
+ </div>
+ <div id="results"></div>
+ <div class="card"><b>🧾 Kodigo: best card mo per category</b><div id="cheat"></div></div>
+ <button class="ghost" onclick="shareApp()">I-share ang Kaskas! sa barkada</button>
+</div>
+
+<div id="setup">
+ <div class="card"><b>Anong cards ang nasa wallet mo?</b><p class="small">Naka-save lang sa phone mo — naka-check na 'to pagbalik mo.</p><div id="cardlist"></div>
+ <button class="big" onclick="show('pos')">Tapos na!</button></div>
+</div>
+<p class="small">⚠️ Prototype: sample rates pa lang ito. I-check pa rin ang current terms ng bangko mo.</p>
+</main>
+<script src="cards.js"></script>
+<script src="app.js"></script>
+</body></html>
