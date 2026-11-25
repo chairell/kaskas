@@ -11,9 +11,10 @@
 //   cap    : max reward per statement cycle (pesos), applied as an upper limit for one transaction.
 //   capNote: cap text shown to the user.
 //   cond   : spend condition the user can tick in "My cards"; {label, rates|merch} replace base rates when ticked.
+//   choose : bonus categories the cardholder picks with the bank; {n, mult, options: {bank label: [app categories]}, def}.
 //   note   : shown under the result.
 
-const CATS = ["Dining", "Groceries", "Drugstore", "Fuel", "Shopping", "Online", "Travel", "Overseas", "Bills", "Other"];
+const CATS = ["Dining", "Groceries", "Drugstore", "Fuel", "Shopping", "Online", "Transport", "Travel", "Overseas", "Bills", "Other"];
 
 const MERCHANTS = {
   landers: { name: "Landers", cat: "Groceries" },
@@ -40,6 +41,7 @@ const MERCH_WORDS = {
   mercury: "Drugstore", watsons: "Drugstore", southstar: "Drugstore",
   caltex: "Fuel", seaoil: "Fuel", cleanfuel: "Fuel",
   lazada: "Online", zalora: "zalora", tiktok: "Online",
+  grab: "Transport", angkas: "Transport", joyride: "Transport", move: "Transport", autosweep: "Transport", easytrip: "Transport", lrt: "Transport", mrt: "Transport",
   agoda: "Travel", booking: "Travel", airasia: "Travel",
   globe: "Bills", smart: "Bills", pldt: "Bills", converge: "Bills", maynilad: "Bills", manilawater: "Bills"
 };
@@ -234,14 +236,16 @@ const CARDS = [
     note: "Bonus points on spend in Japan aren't modelled.",
     src: "https://rcbccredit.com/features-and-benefits/rewards/rewards-points" },
   { id: "rcbc_flex", bank: "RCBC", name: "RCBC Flex Visa", type: "points", per: 36,
-    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 }, mult: { Dining: 2, Travel: 2 },
+    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 },
+    choose: { n: 2, mult: 2, options: { Dining: ["Dining"], Clothing: ["Shopping"], Travel: ["Travel"], Transportation: ["Transport"] }, def: ["Dining", "Travel"] },
     redeem: [RCBC_CASH, RCBC_MILES],
-    note: "2x on 2 categories you choose (dining, clothing, travel or transportation). Assumes dining and travel.",
+    note: "2x on the 2 categories you picked with RCBC. Set them in My cards. Clothing counts as Shopping here.",
     src: "https://rcbccredit.com/credit-cards" },
   { id: "rcbc_flexgold", bank: "RCBC", name: "RCBC Flex Gold Visa", type: "points", per: 36,
-    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 }, mult: { Groceries: 2, Fuel: 2, Travel: 2 },
+    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 },
+    choose: { n: 3, mult: 2, options: { Grocery: ["Groceries"], Gas: ["Fuel"], "Department store": ["Shopping"], "Household appliances": ["Shopping"], Travel: ["Travel"] }, def: ["Grocery", "Gas", "Travel"] },
     redeem: [RCBC_CASH, RCBC_MILES],
-    note: "2x on 3 categories you choose (grocery, gas, department store, appliances or travel). Assumes grocery, gas and travel.",
+    note: "2x on the 3 categories you picked with RCBC. Set them in My cards. Department store and appliances count as Shopping here.",
     src: "https://rcbccredit.com/credit-cards" },
   { id: "rcbc_visaplat", bank: "RCBC", name: "RCBC Visa Platinum (Preferred AIRMILES)", type: "miles", per: 48,
     perCat: { Overseas: 25 },

@@ -1,6 +1,7 @@
 let S;
 try { S = JSON.parse(localStorage.kaskas || "null"); } catch (e) { S = null; }
-S = Object.assign({ owned: [], cat: "Dining", merch: "", amts: [], guide: 0, mileVal: 0.5, conds: {} }, S || {});
+S = Object.assign({ owned: [], cat: "Dining", merch: "", amts: [], guide: 0, mileVal: 0.5, conds: {}, picks: {} }, S || {});
+S.picks = S.picks || {};
 S.owned = S.owned.filter(id => CARDS.some(c => c.id == id));   // drop cards from older versions
 if (!CATS.includes(S.cat)) S.cat = "Dining";
 if (S.merch && !MERCHANTS[S.merch]) S.merch = "";
@@ -34,13 +35,23 @@ function renderList() {
     const n = cards.filter(c => S.owned.includes(c.id)).length;
     return `<details ${n ? "open" : ""}><summary>${b}${n ? ` · ${n} selected` : ""}</summary>` + cards.map(c => `
       <label class="row"><input type="checkbox" ${S.owned.includes(c.id) ? "checked" : ""} onchange="toggle('${c.id}')"> <span>${esc(c.name)}</span></label>
+      ${c.choose ? `<div class="cond" id="pick_${c.id}" style="display:${S.owned.includes(c.id) ? "block" : "none"}">Your ${c.choose.n} bonus categories (${c.choose.mult}x):<br>${Object.keys(c.choose.options).map(o => `<label style="display:inline-block;margin:4px 10px 0 0"><input type="checkbox" ${picks(c).includes(o) ? "checked" : ""} onchange="togglePick('${c.id}','${o}',this)">${esc(o)}</label>`).join("")}</div>` : ""}
       ${c.cond ? `<label class="cond" id="cond_${c.id}" style="display:${S.owned.includes(c.id) ? "block" : "none"}"><input type="checkbox" ${S.conds[c.id] ? "checked" : ""} onchange="toggleCond('${c.id}')">${esc(c.cond.label)}</label>` : ""}`).join("") + "</details>";
   }).join("");
   $("mileVal").value = S.mileVal;
 }
 function toggle(id) {
   S.owned = S.owned.includes(id) ? S.owned.filter(x => x != id) : [...S.owned, id]; save();
-  const el = $("cond_" + id); if (el) el.style.display = S.owned.includes(id) ? "block" : "none";
+  for (const p of ["cond_", "pick_"]) { const el = $(p + id); if (el) el.style.display = S.owned.includes(id) ? "block" : "none"; }
+}
+function picks(c) { return S.picks[c.id] || c.choose.def; }
+function togglePick(id, opt, box) {
+  const c = CARDS.find(x => x.id == id), cur = picks(c);
+  if (box.checked) {
+    if (cur.length >= c.choose.n) { box.checked = false; return alert(`You can pick ${c.choose.n}. Untick one first.`); }
+    S.picks[id] = [...cur, opt];
+  } else S.picks[id] = cur.filter(x => x != opt);
+  save();
 }
 function toggleCond(id) { S.conds[id] = !S.conds[id]; save(); }
 function setMileVal() { const v = +$("mileVal").value; if (v >= 0) { S.mileVal = v; save(); } }
@@ -68,7 +79,8 @@ function calc(c, cat, a, m) {
   }
   // points / miles
   const per = (m && c.perMerch && c.perMerch[m]) || (c.perCat && c.perCat[cat]) || c.per;
-  const mult = (c.mult && c.mult[cat]) || 1;
+  let mult = (c.mult && c.mult[cat]) || 1;
+  if (c.choose && picks(c).some(o => c.choose.options[o].includes(cat))) mult = c.choose.mult;
   const units = Math.floor(a / per) * mult;
   const unit = c.type == "miles" ? "mile" : "point";
   const opts = c.redeem.map(o => o.kind == "cash"
