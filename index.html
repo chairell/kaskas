@@ -41,6 +41,19 @@ details summary{font-weight:800;padding:8px 0;cursor:pointer}
 .cond{margin:-4px 0 8px 32px;font-size:13px;font-weight:500;color:var(--mut)}
 .cond input{width:18px;height:18px;margin:0 6px 0 0;vertical-align:middle}
 .ticks{position:relative;height:18px}.ticks span{position:absolute;transform:translateX(-50%)}.ticks span:first-child,.ticks span:last-child{transform:none}
+.hero .bank{font-size:13px;color:var(--mut);font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:6px}
+.hname{font-size:21px;font-weight:800;line-height:1.2}
+.hval{font-size:40px;font-weight:900;color:var(--hot);letter-spacing:-1px;margin-top:6px}.hval span{font-size:18px;color:var(--ink);font-weight:700}
+.hpct{font-size:15px;font-weight:600}
+.badges{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.tag{width:auto;margin:0;padding:3px 9px;font-size:12px;font-weight:700;border:1.5px solid var(--mut);border-radius:999px;background:#fff;color:var(--mut)}
+.tag.warn{border-color:#c2410c;color:#c2410c;background:#fff4ed}.tag.good{border-color:#15803d;color:#15803d;background:#effaf3}
+.tagnote{font-size:13px;background:var(--bg);border-radius:10px;padding:8px 10px;margin-top:6px}
+details.how{margin-top:10px}details.how summary{font-weight:700;font-size:14px;color:var(--hot);cursor:pointer}
+details.rowd{border-top:1px solid #eee;padding:10px 0}details.rowd:first-of-type{margin-top:6px}
+details.rowd summary{list-style:none;cursor:pointer}details.rowd summary::-webkit-details-marker{display:none}
+.rtop{display:flex;justify-content:space-between;gap:10px;font-weight:700}.rpct{flex:none}
+.rsub{font-size:13px;color:var(--mut);margin-top:2px}
 #guide,#setup{display:none}
 a{color:var(--hot)}
 </style></head><body>
@@ -54,7 +67,7 @@ a{color:var(--hot)}
   <div class="chips" id="cats"></div>
   <label style="display:block;margin-top:12px">How much? (₱)<input id="amt" type="number" inputmode="decimal" placeholder="0" oninput="amtTyped()"></label>
   <input id="slider" type="range" min="0" max="1000" step="1" value="0" oninput="slid()" onchange="compare(true)" aria-label="Amount slider">
-  <div class="small ticks"><span style="left:0">₱0</span><span style="left:10%">₱1k</span><span style="left:31.6%">₱10k</span><span style="left:70.7%">₱50k</span><span style="right:0">₱100k</span></div>
+  <div class="small ticks"><span style="left:0">₱0</span><span style="left:31.6%">₱10k</span><span style="left:70.7%">₱50k</span><span style="right:0">₱100k</span></div>
   <div class="chips" id="quick"></div>
   <button class="big" onclick="compare(true)">Which card should I use? 💳</button>
  </div>

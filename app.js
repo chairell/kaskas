@@ -8,6 +8,7 @@ S.merch = "";   // shop input removed for now; merchant bonuses stay in the data
 
 const $ = id => document.getElementById(id);
 const save = () => { try { localStorage.kaskas = JSON.stringify(S); } catch (e) {} };
+const peso0 = n => "₱" + Math.round(n).toLocaleString("en-PH");
 const peso = n => "₱" + n.toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const pct = (v, a) => (v / a * 100).toFixed(2) + "%";
 const num = n => (+n.toFixed(2)).toLocaleString("en-PH");
@@ -61,13 +62,18 @@ function toggleCond(id) { S.conds[id] = !S.conds[id]; save(); }
 function setMileVal() { const v = +$("mileVal").value; if (v >= 0) { S.mileVal = v; save(); } }
 
 // ── The engine: earn → conversion → redemption value ──
+// Returns the value plus the three layers, notes for the breakdown, and short badges for caps and conditions.
 function calc(c, cat, a, m) {
   const cond = c.cond && S.conds[c.id] ? c.cond : null;
-  const notes = [];
+  const notes = [], badges = [];
   if (c.note) notes.push(c.note);
-  if (c.capNote) notes.push("Cap: " + c.capNote + ".");
+  if (c.cap) badges.push({ t: `Cap ${peso0(c.cap)}/cycle`, d: `Rewards are capped at ${c.capNote || peso0(c.cap) + " per cycle"}.` });
+  else if (c.capNote) badges.push({ t: /year/.test(c.capNote) ? "Annual cap" : /month/.test(c.capNote) ? "Monthly cap" : "Cap", d: `Capped at ${c.capNote}.` });
+  if (c.minTxn) badges.push({ t: `${peso0(c.minTxn)} min receipt`, warn: a < c.minTxn, d: `Earns only on single receipts of ${peso0(c.minTxn)} or more.` });
+  if (c.cond) badges.push(cond ? { t: "✓ Spend condition on", d: `Using the higher rate because you ticked: "${c.cond.label}". Change it in My cards.` }
+                              : { t: "Needs min. spend", warn: true, d: `Top rate needs: "${c.cond.label}". If you usually do, tick it in My cards.` });
   if (c.minTxn && a < c.minTxn) {
-    return { earned: `Nothing (minimum ₱${c.minTxn.toLocaleString()} per receipt)`, conv: "—", redeem: "—", value: 0, notes };
+    return { earned: `Nothing below ${peso0(c.minTxn)} per receipt`, conv: "—", redeem: "—", value: 0, notes, badges };
   }
   if (c.type == "cash") {
     const rates = Object.assign({}, c.rates, cond && cond.rates);
@@ -75,11 +81,10 @@ function calc(c, cat, a, m) {
     let r = rates[cat] ?? rates.Other ?? 0;
     if (m && merch[m] != null) r = merch[m];
     if (m && c.merchTiers && c.merchTiers[m]) { const t = c.merchTiers[m].find(([min]) => a >= min); if (t) r = t[1]; }
-    let v = a * r, capped = false;
-    if (c.cap && v > c.cap) { v = c.cap; capped = true; }
-    if (c.cond && !cond) notes.push("Higher rate needs: " + c.cond.label.replace(/^I /, "you ") + " (tick it in My cards).");
-    return { earned: `${peso(v)} cashback (${(r * 100).toFixed(1)}%)${capped ? ", capped" : ""}`, conv: "None — goes straight to your bill",
-      redeem: "Credited to your statement", value: v, notes };
+    let v = a * r;
+    if (c.cap && v > c.cap) { v = c.cap; badges.unshift({ t: "Capped", warn: true, d: `This purchase would earn more, but the cap limits it to ${peso0(c.cap)}.` }); }
+    return { earned: `${peso(v)} cashback (${(r * 100).toFixed(1)}%)`, conv: "None — goes straight to your bill",
+      redeem: "Credited to your statement", value: v, notes, badges };
   }
   // points / miles
   const per = (m && c.perMerch && c.perMerch[m]) || (c.perCat && c.perCat[cat]) || c.per;
@@ -89,16 +94,30 @@ function calc(c, cat, a, m) {
   const unit = c.type == "miles" ? "mile" : "point";
   const opts = c.redeem.map(o => o.kind == "cash"
     ? { o, v: units * o.val, conv: `1 ${unit} = ₱${num(o.val)}`, how: o.label }
-    : { o, v: units / o.ppm * S.mileVal, conv: o.ppm == 1 ? `1 ${unit} = 1 mile` : `${num(o.ppm)} ${unit}s = 1 ${o.prog.split(" (")[0]} mile`,
+    : { o, v: units / o.ppm * S.mileVal, conv: o.ppm == 1 ? (unit == "mile" ? "None — earned as miles directly" : `1 ${unit} = 1 mile`) : `${num(o.ppm)} ${unit}s = 1 ${o.prog.split(" (")[0]} mile`,
         how: `${num(units / o.ppm)} ${o.prog} at ₱${num(S.mileVal)}/mile` });
   const best = opts.reduce((x, y) => (y.v > x.v ? y : x));
   let v = best.v;
-  if (c.cap && v > c.cap) v = c.cap;
+  if (c.cap && v > c.cap) { v = c.cap; badges.unshift({ t: "Capped", warn: true, d: `This purchase would earn more, but the cap limits it to ${peso0(c.cap)}.` }); }
+  if (best.o.kind == "miles") badges.push({ t: `Miles at ${peso(S.mileVal)}`, d: `Value assumes 1 airline mile = ${peso(S.mileVal)}. Change it in My cards.` });
+  if (mult > 1) badges.push({ t: `${mult}x ${cat}`, good: true, d: `This card earns ${mult}x points on ${cat}.` });
   const other = opts.filter(x => x !== best).map(x => `${x.how}: ${peso(x.v)}`);
   if (other.length) notes.push("Other option — " + other.join("; ") + ".");
   return { earned: `${num(units)} ${unit}s (₱${per} per ${unit}${mult > 1 ? `, ${mult}x on ${cat}` : ""})`,
-    conv: best.conv, redeem: best.how, value: v, notes };
+    conv: best.conv, redeem: best.how, value: v, notes, badges };
 }
+
+const badgeHtml = x => x.badges.length ? `<div class="badges">${x.badges.map(b =>
+  `<button class="tag ${b.warn ? "warn" : b.good ? "good" : ""}" data-d="${esc(b.d)}" onclick="tagTap(event,this)">${b.warn ? "⚠ " : ""}${esc(b.t)}</button>`).join("")}</div><div class="tagnote" hidden></div>` : "";
+function tagTap(e, el) {
+  e.preventDefault(); e.stopPropagation();
+  const n = el.parentElement.nextElementSibling, same = !n.hidden && n.dataset.src == el.dataset.d;
+  n.textContent = el.dataset.d; n.dataset.src = el.dataset.d; n.hidden = same;
+}
+const breakdown = (x, a) => `<table><tr><td>Earn</td><td>${esc(x.earned)}</td></tr><tr><td>Conversion</td><td>${esc(x.conv)}</td></tr>
+  <tr><td>Redemption</td><td>${esc(x.redeem)}</td></tr><tr><td>Value</td><td>${peso(x.value)} (${pct(x.value, a)} back)</td></tr></table>
+  ${x.notes.length ? `<p class="small">${x.notes.map(esc).join("<br>")}</p>` : ""}
+  <p class="small"><a href="${x.c.src}" target="_blank" rel="noopener">Source: ${esc(x.c.bank)} terms</a></p>`;
 
 // final = true when the user taps the button, lets go of the slider or picks a recent amount.
 // Live updates (dragging, typing, changing category) skip saving and scrolling.
@@ -109,12 +128,20 @@ function compare(final) {
   const mine = CARDS.filter(c => S.owned.includes(c.id));
   if (!mine.length) { $("results").innerHTML = '<div class="card">Pick your cards first under 💳 My cards.</div>'; return; }
   const r = mine.map(c => ({ c, ...calc(c, S.cat, a, S.merch) })).sort((x, y) => y.value - x.value);
-  $("results").innerHTML = r.map((x, i) => `<div class="card ${i == 0 ? "win" : ""}">${i == 0 ? '<span class="badge">USE THIS ONE 🔥</span><br>' : ""}<b>${esc(x.c.name)}</b>
-    <table><tr><td>Earn</td><td>${x.earned}</td></tr><tr><td>Conversion</td><td>${esc(x.conv)}</td></tr>
-    <tr><td>Redemption</td><td>${esc(x.redeem)}</td></tr><tr><td><b>Value</b></td><td><b>${peso(x.value)} (${pct(x.value, a)} back)</b></td></tr></table>
-    ${x.notes.length ? `<p class="small">${x.notes.map(esc).join("<br>")}</p>` : ""}
-    <p class="small"><a href="${x.c.src}" target="_blank" rel="noopener">Source</a></p>
-    ${i == 0 ? `<button class="ghost" onclick="shareResult()">Share this result</button>` : ""}</div>`).join("");
+  const w = r[0], open = $("results").querySelector("details.how[open]") && window._last && window._last.r[0].c.id == w.c.id;
+  let h = `<div class="card win hero">
+    <span class="badge">USE THIS ONE 🔥</span>
+    <div class="bank">${esc(w.c.bank)}</div><div class="hname">${esc(w.c.name)}</div>
+    <div class="hval">${peso(w.value)} <span>back</span></div><div class="hpct">${pct(w.value, a)} on ${peso0(a)} · ${esc(S.cat)}</div>
+    ${badgeHtml(w)}
+    <details class="how" ${open ? "open" : ""}><summary>How is this calculated?</summary>${breakdown(w, a)}</details>
+    <button class="ghost" onclick="shareResult()">Share this result</button></div>`;
+  if (r.length > 1) h += `<div class="card"><b>Your other cards</b>${r.slice(1).map(x => {
+    const diff = w.value - x.value;
+    return `<details class="rowd"><summary><div class="rtop"><span class="rname">${esc(x.c.name)}</span><span class="rpct">${x.value ? pct(x.value, a) : "0%"}</span></div>
+      <div class="rsub">${x.value ? peso(x.value) + " back" : "Earns nothing here"}${diff > 0.005 ? ` · <b>${peso(diff)} less</b>` : " · same as top"}</div>${badgeHtml(x)}</summary>${breakdown(x, a)}</details>`;
+  }).join("")}</div>`;
+  $("results").innerHTML = h;
   window._last = { r, a };
   if (final) $("results").scrollIntoView({ behavior: "smooth" });
 }
