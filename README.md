@@ -1,19 +1,22 @@
 # Kaskas!
 
-**Saan ka kakaskas?** A mobile web app that tells you which of *your* credit cards earns the most rewards for the purchase you're about to make.
+**Which card should you swipe?** A mobile web app that tells you which of *your* credit cards earns the most rewards on the purchase you're about to make.
+
+Live: https://chairell.github.io/kaskas/
 
 ## What it does
-- **Cards ko**: pick the cards in your wallet once. They're saved on your phone and pre-selected next time.
-- **Checkout check**: choose a category (or type the merchant), enter the amount, and get your cards ranked.
-- **Earn → Conversion → Redemption**: each card shows the three layers separately, then the effective peso value and % back.
-- **Kodigo**: a cheat sheet of your best card per category.
-- **Smart defaults**: remembers your last category and recent amounts.
-- **Share**: share the app, or flex a specific result with a link that pre-fills the category and amount.
-- **Add to Home Screen** guide for iPhone and Android; works offline once installed.
-- **Location hint** (optional, off until you tap it).
+- **My cards**: tick the cards in your wallet, grouped by bank. They're saved on your phone and pre-selected next time.
+- **Checkout check**: type the shop or pick a category, enter the amount, and your cards are ranked by value.
+- **Earn → Conversion → Redemption**: each card shows how many points, miles or pesos you earn, how they convert, and what they're worth, with the % back.
+- **Merchant bonuses**: Landers, Robinsons, Puregold, Cebu Pacific, PAL, Singapore Airlines, Petron, Shell, Meralco and Shopee are recognised.
+- **Spend conditions**: cards like Metrobank Cashback and UnionBank Cash Back only pay their top rate after a minimum spend. Tick the condition in My cards if you usually meet it.
+- **Mile value**: set what one airline mile is worth to you (default ₱0.50) to compare miles with cashback fairly.
+- **Cheat sheet**, recent amounts, sharing, an Add to Home Screen guide, and offline support.
 
 ## Card data
-All rates in `cards.js` are **sample values** for the prototype. Replace them with verified terms from each bank before relying on the rankings.
+`cards.js` holds 41 cards from BPI, BDO, UnionBank, Metrobank, Maya, MariBank, PNB and EastWest, compiled from each bank's website and published terms on Nov 25, 2026. Every card links to its source.
+
+Not modelled: limited-time promos, annual caps beyond a simple per-cycle limit, and cards with no published earn rate (for example PNB Ze-Lo). Rates change often, so verify before relying on a ranking.
 
 ## Run it
-It's plain HTML/JS with no build step. Open `index.html`, or serve it with GitHub Pages (Settings → Pages → Deploy from branch → `main` / root).
+Plain HTML/JS, no build step. Served with GitHub Pages from `main` / root.

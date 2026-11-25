@@ -1,29 +1,29 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Kaskas! — Saan ka kakaskas?</title>
-<meta name="description" content="Alamin kung aling card mo ang pinaka-sulit i-kaskas, bago ka magbayad.">
+<title>Kaskas! — Which card should you swipe?</title>
+<meta name="description" content="Find out which of your credit cards earns the most rewards before you pay.">
 <meta name="theme-color" content="#ff4d2e">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Kaskas!">
-<meta property="og:title" content="Kaskas! — Saan ka kakaskas?">
-<meta property="og:description" content="Alamin kung aling card mo ang pinaka-sulit i-kaskas, bago ka magbayad.">
+<meta property="og:title" content="Kaskas! — Which card should you swipe?">
+<meta property="og:description" content="Find out which of your credit cards earns the most rewards before you pay.">
 <meta property="og:image" content="og.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
 :root{--hot:#ff4d2e;--ink:#1b1230;--sun:#ffd23f;--bg:#fff8ef;--mut:#6b6280}
 *{box-sizing:border-box}
 body{font-family:system-ui,-apple-system,sans-serif;margin:0;background:var(--bg);color:var(--ink)}
-header{background:var(--hot);color:#fff;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center}
+header{background:var(--hot);color:#fff;padding:14px 16px;padding-top:calc(14px + env(safe-area-inset-top));display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:2}
 header h1{margin:0;font-size:26px;font-weight:900;letter-spacing:-1px}
-header button{width:auto;background:#fff3;color:#fff;margin:0;padding:8px 12px;font-size:14px}
+header button{width:auto;background:#fff3;color:#fff;margin:0;padding:8px 12px;font-size:14px;border:0}
 main{padding:14px;max-width:520px;margin:auto}
 .card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 0 var(--ink)}
 label{font-weight:600;font-size:14px}
-input,button{font-size:17px;padding:12px;border-radius:12px;border:2px solid var(--ink);width:100%;margin-top:6px;font-family:inherit}
+input,select,button{font-size:17px;padding:12px;border-radius:12px;border:2px solid var(--ink);width:100%;margin-top:6px;font-family:inherit;background:#fff;color:var(--ink)}
 button{background:var(--ink);color:#fff;font-weight:700;cursor:pointer}
 .big{background:var(--hot);border-color:var(--hot);font-size:19px}
 .ghost{background:#fff;color:var(--ink)}
@@ -31,34 +31,46 @@ button{background:var(--ink);color:#fff;font-weight:700;cursor:pointer}
 .chips button{width:auto;margin:0;padding:8px 12px;font-size:14px;background:#fff;color:var(--ink)}
 .chips button.on{background:var(--sun)}
 .win{border:3px solid var(--hot)}
-.badge{display:inline-block;background:var(--sun);border-radius:8px;padding:2px 8px;font-size:13px;font-weight:800}
+.badge{display:inline-block;background:var(--sun);border-radius:8px;padding:2px 8px;font-size:13px;font-weight:800;margin-bottom:4px}
 .small{font-size:13px;color:var(--mut)}
-table{width:100%;font-size:14px;border-collapse:collapse;margin-top:6px}td{padding:4px 0;vertical-align:top}td:first-child{color:var(--mut);width:38%}
+.merch{display:inline-block;background:var(--sun);border-radius:8px;padding:2px 8px;font-size:13px;font-weight:700;margin-top:6px}
+table{width:100%;font-size:14px;border-collapse:collapse;margin-top:6px}td{padding:4px 0;vertical-align:top}td:first-child{color:var(--mut);width:34%}
+details summary{font-weight:800;padding:8px 0;cursor:pointer}
+.row{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-weight:500}
+.row input{width:22px;height:22px;margin:2px 0 0;flex:none}
+.cond{margin:-4px 0 8px 32px;font-size:13px;font-weight:500;color:var(--mut)}
+.cond input{width:18px;height:18px;margin:0 6px 0 0;vertical-align:middle}
 #guide,#setup{display:none}
+a{color:var(--hot)}
 </style></head><body>
-<header><h1>Kaskas!</h1><button onclick="show('setup')">💳 Cards ko</button></header>
+<header><h1>Kaskas!</h1><button onclick="show('setup')">💳 My cards</button></header>
 <main>
-<div id="guide" class="card"><b>📲 Gawin mong app 'to!</b><p class="small" id="gtext"></p><button onclick="dismissGuide()">Sige, gets!</button></div>
+<div id="guide" class="card"><b>📲 Add Kaskas! to your home screen</b><p class="small" id="gtext"></p><button onclick="dismissGuide()">Got it</button></div>
 
 <div id="pos">
  <div class="card">
-  <label>Saan ka bibili?<input id="merchant" placeholder="hal. Jollibee, SM, Shell, Shopee" oninput="merchantHint()"></label>
+  <label>Where are you paying?<input id="merchant" list="merchlist" placeholder="e.g. Jollibee, Landers, Shell, Shopee" oninput="merchantHint()"></label>
+  <datalist id="merchlist"></datalist>
+  <div id="merchTag"></div>
   <div class="chips" id="cats"></div>
-  <label style="display:block;margin-top:12px">Magkano? (₱)<input id="amt" type="number" inputmode="decimal" placeholder="0"></label>
+  <label style="display:block;margin-top:12px">How much? (₱)<input id="amt" type="number" inputmode="decimal" placeholder="0"></label>
   <div class="chips" id="quick"></div>
-  <button class="big" onclick="compare()">Saan ako kakaskas? 💳</button>
-  <button class="ghost" onclick="locHint()">📍 Hulaan ang shop gamit ang location (optional)</button>
+  <button class="big" onclick="compare()">Which card should I use? 💳</button>
+  <button class="ghost" onclick="locHint()">📍 Guess the shop from my location (optional)</button>
  </div>
  <div id="results"></div>
- <div class="card"><b>🧾 Kodigo: best card mo per category</b><div id="cheat"></div></div>
- <button class="ghost" onclick="shareApp()">I-share ang Kaskas! sa barkada</button>
+ <div class="card"><b>🧾 Cheat sheet: your best card per category</b><p class="small">Based on a ₱5,000 purchase.</p><div id="cheat"></div></div>
+ <button class="ghost" onclick="shareApp()">Share Kaskas! with friends</button>
 </div>
 
 <div id="setup">
- <div class="card"><b>Anong cards ang nasa wallet mo?</b><p class="small">Naka-save lang sa phone mo — naka-check na 'to pagbalik mo.</p><div id="cardlist"></div>
- <button class="big" onclick="show('pos')">Tapos na!</button></div>
+ <div class="card"><b>Which cards are in your wallet?</b><p class="small">Saved on this phone only, and pre-selected next time you open the app.</p><div id="cardlist"></div></div>
+ <div class="card"><b>What's one airline mile worth to you?</b>
+  <p class="small">Used to compare miles with cashback. ₱0.50 is a cautious estimate; frequent flyers on business class often get more.</p>
+  <input id="mileVal" type="number" step="0.05" inputmode="decimal" onchange="setMileVal()"></div>
+ <button class="big" onclick="show('pos')">Done</button>
 </div>
-<p class="small">⚠️ Prototype: sample rates pa lang ito. I-check pa rin ang current terms ng bangko mo.</p>
+<p class="small">Rates come from each bank's website and published terms, checked Nov 25, 2026. They change often, and promos aren't included. Check the bank's current terms before relying on a result.</p>
 </main>
 <script src="cards.js"></script>
 <script src="app.js"></script>

@@ -1,7 +1,7 @@
 {
   "name": "Kaskas!",
   "short_name": "Kaskas!",
-  "description": "Alamin kung aling card mo ang pinaka-sulit i-kaskas.",
+  "description": "Find out which of your credit cards earns the most rewards.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#fff8ef",
