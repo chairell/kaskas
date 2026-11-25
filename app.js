@@ -4,7 +4,7 @@ S = Object.assign({ owned: [], cat: "Dining", merch: "", amts: [], guide: 0, mil
 S.picks = S.picks || {};
 S.owned = S.owned.filter(id => CARDS.some(c => c.id == id));   // drop cards from older versions
 if (!CATS.includes(S.cat)) S.cat = "Dining";
-if (S.merch && !MERCHANTS[S.merch]) S.merch = "";
+S.merch = "";   // shop input removed for now; merchant bonuses stay in the data for later
 
 const $ = id => document.getElementById(id);
 const save = () => { try { localStorage.kaskas = JSON.stringify(S); } catch (e) {} };
@@ -26,12 +26,9 @@ function show(v) {
   if (v == "pos") cheatSheet();
   window.scrollTo(0, 0);
 }
-function setCat(c) { S.cat = c; S.merch = ""; save(); renderCats(); renderMerch(); compare(false); }
+function setCat(c) { S.cat = c; save(); renderCats(); compare(false); }
 function renderCats() {
   $("cats").innerHTML = CATS.map(c => `<button class="${c == S.cat ? "on" : ""}" onclick="setCat('${c}')">${c}</button>`).join("");
-}
-function renderMerch() {
-  $("merchTag").innerHTML = S.merch ? `<span class="merch">🏪 ${esc(MERCHANTS[S.merch].name)} bonus applies <a href="#" onclick="S.merch='';save();renderMerch();compare(false);return false">✕</a></span>` : "";
 }
 function renderQuick() {
   $("quick").innerHTML = S.amts.map(a => `<button onclick="setAmt(${a})">${peso(a)}</button>`).join("");
@@ -128,22 +125,6 @@ function cheatSheet() {
     return `<tr><td>${cat}</td><td><b>${esc(b.c.name)}</b> · ${pct(b.v, 5000)}</td></tr>`;
   }).join("") + "</table>" : '<p class="small">Pick your cards to see your cheat sheet.</p>';
 }
-function merchantHint() {
-  const k = $("merchant").value.toLowerCase().replace(/[^a-z0-9]/g, "");
-  if (!k) return;
-  const words = Object.keys(MERCH_WORDS).sort((x, y) => y.length - x.length);   // longest first: "smart" before "sm"
-  for (const w of words) if (k.startsWith(w) || (w.length > 3 && k.includes(w))) {
-    const t = MERCH_WORDS[w];
-    if (MERCHANTS[t]) { S.cat = MERCHANTS[t].cat; S.merch = t; } else { S.cat = t; S.merch = ""; }
-    save(); renderCats(); renderMerch(); compare(false); return;
-  }
-}
-function locHint() {
-  if (!navigator.geolocation) return toast("Location isn't available on this device.");
-  navigator.geolocation.getCurrentPosition(
-    () => toast("Got your location. Shop matching is coming in a later version — type the shop name for now."),
-    () => toast("No problem — location stays off."));
-}
 function toast(t) { const d = document.createElement("div"); d.className = "card small"; d.textContent = t; $("results").prepend(d); setTimeout(() => d.remove(), 4000); }
 function baseUrl() { return location.href.split(/[?#]/)[0]; }
 function doShare(d) {
@@ -153,9 +134,9 @@ function doShare(d) {
 function shareApp() { doShare({ title: "Kaskas!", text: "Find out which of your cards earns the most on every purchase:", url: baseUrl() }); }
 function shareResult() {
   const { r, a } = window._last, w = r[0];
-  const where = S.merch ? MERCHANTS[S.merch].name : S.cat.toLowerCase();
+  const where = S.cat.toLowerCase();
   doShare({ title: "Kaskas!", text: `${w.c.name} got me ${pct(w.value, a)} back on ${where}. Which of your cards wins?`,
-    url: `${baseUrl()}?cat=${encodeURIComponent(S.cat)}&amt=${a}${S.merch ? "&m=" + S.merch : ""}` });
+    url: `${baseUrl()}?cat=${encodeURIComponent(S.cat)}&amt=${a}` });
 }
 function guide() {
   if (S.guide || matchMedia("(display-mode: standalone)").matches || navigator.standalone) return;
@@ -167,11 +148,9 @@ function guide() {
 }
 function dismissGuide() { S.guide = 1; save(); $("guide").style.display = "none"; }
 
-$("merchlist").innerHTML = Object.values(MERCHANTS).map(m => `<option value="${esc(m.name)}">`).join("");
 const q = new URLSearchParams(location.search);
 if (q.get("cat") && CATS.includes(q.get("cat"))) S.cat = q.get("cat");
-if (q.get("m") && MERCHANTS[q.get("m")]) S.merch = q.get("m");
 if (q.get("amt")) { $("amt").value = q.get("amt"); $("slider").value = toSlider(+q.get("amt")); }
-renderCats(); renderMerch(); renderQuick(); renderList(); cheatSheet(); guide();
+renderCats(); renderQuick(); renderList(); cheatSheet(); guide();
 if (!S.owned.length) show("setup"); else if ($("amt").value) compare(false);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});

@@ -34,7 +34,6 @@ button{background:var(--ink);color:#fff;font-weight:700;cursor:pointer}
 .win{border:3px solid var(--hot)}
 .badge{display:inline-block;background:var(--sun);border-radius:8px;padding:2px 8px;font-size:13px;font-weight:800;margin-bottom:4px}
 .small{font-size:13px;color:var(--mut)}
-.merch{display:inline-block;background:var(--sun);border-radius:8px;padding:2px 8px;font-size:13px;font-weight:700;margin-top:6px}
 table{width:100%;font-size:14px;border-collapse:collapse;margin-top:6px}td{padding:4px 0;vertical-align:top}td:first-child{color:var(--mut);width:34%}
 details summary{font-weight:800;padding:8px 0;cursor:pointer}
 .row{display:flex;gap:10px;align-items:flex-start;margin:10px 0;font-weight:500}
@@ -51,16 +50,13 @@ a{color:var(--hot)}
 
 <div id="pos">
  <div class="card">
-  <label>Where are you paying?<input id="merchant" list="merchlist" placeholder="e.g. Jollibee, Landers, Shell, Shopee" oninput="merchantHint()"></label>
-  <datalist id="merchlist"></datalist>
-  <div id="merchTag"></div>
+  <label>What are you paying for?</label>
   <div class="chips" id="cats"></div>
   <label style="display:block;margin-top:12px">How much? (₱)<input id="amt" type="number" inputmode="decimal" placeholder="0" oninput="amtTyped()"></label>
   <input id="slider" type="range" min="0" max="1000" step="1" value="0" oninput="slid()" onchange="compare(true)" aria-label="Amount slider">
   <div class="small ticks"><span style="left:0">₱0</span><span style="left:10%">₱1k</span><span style="left:31.6%">₱10k</span><span style="left:70.7%">₱50k</span><span style="right:0">₱100k</span></div>
   <div class="chips" id="quick"></div>
   <button class="big" onclick="compare(true)">Which card should I use? 💳</button>
-  <button class="ghost" onclick="locHint()">📍 Guess the shop from my location (optional)</button>
  </div>
  <div id="results"></div>
  <div class="card"><b>🧾 Cheat sheet: your best card per category</b><p class="small">Based on a ₱5,000 purchase.</p><div id="cheat"></div></div>
