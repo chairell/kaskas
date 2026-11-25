@@ -1,0 +1,101 @@
+{
+ "updated": "2026-11-25",
+ "sources": {
+  "BPI": {
+   "ok": true,
+   "count": 10
+  }
+ },
+ "promos": [
+  {
+   "id": "bpi-lazada-payday-sale-promo",
+   "bank": "BPI",
+   "title": "Lazada: Payday Sale Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/lazada-payday-sale-promo",
+   "validUntil": "2026-11-30",
+   "cards": "credit",
+   "category": "Online"
+  },
+  {
+   "id": "bpi-swm-promo",
+   "bank": "BPI",
+   "title": "SWM Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/swm-promo",
+   "validUntil": "2026-12-13",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-our-home-promo",
+   "bank": "BPI",
+   "title": "Our Home Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/our-home-promo",
+   "validUntil": "2026-12-14",
+   "cards": "credit+debit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-linden-teak-promo",
+   "bank": "BPI",
+   "title": "Linden Teak Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/linden-teak-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit+debit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-leblanc-hotel-and-resort-promo",
+   "bank": "BPI",
+   "title": "LeBlanc Hotel and Resort Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/leblanc-hotel-and-resort-promo",
+   "validUntil": "2027-01-14",
+   "cards": "credit+debit",
+   "category": "Travel"
+  },
+  {
+   "id": "bpi-the-notebook-the-musical-promo",
+   "bank": "BPI",
+   "title": "The Notebook: The Musical Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/the-notebook-the-musical-promo",
+   "validUntil": "2027-02-21",
+   "cards": "credit+debit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-jewelmer-promo",
+   "bank": "BPI",
+   "title": "Jewelmer Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/jewelmer-promo",
+   "validUntil": "2027-02-28",
+   "cards": "credit+debit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-gap-promo",
+   "bank": "BPI",
+   "title": "GAP Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/gap-promo",
+   "validUntil": "2027-02-28",
+   "cards": "credit+debit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-capital-promo",
+   "bank": "BPI",
+   "title": "Capital Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/capital-promo",
+   "validUntil": "2027-04-30",
+   "cards": "credit+debit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-montesa-medical-group-promo",
+   "bank": "BPI",
+   "title": "Montesa Medical Group Promo",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/montesa-medical-group-promo",
+   "validUntil": "2027-05-31",
+   "cards": "credit+debit",
+   "category": "Shopping"
+  }
+ ]
+}

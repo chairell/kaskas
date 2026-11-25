@@ -27,7 +27,7 @@ function show(v) {
   if (v == "pos") cheatSheet();
   window.scrollTo(0, 0);
 }
-function setCat(c) { S.cat = c; save(); renderCats(); compare(false); }
+function setCat(c) { S.cat = c; save(); renderCats(); compare(false); renderPromos(); }
 function renderCats() {
   $("cats").innerHTML = CATS.map(c => `<button class="${c == S.cat ? "on" : ""}" onclick="setCat('${c}')">${c}</button>`).join("");
 }
@@ -46,7 +46,7 @@ function renderList() {
   $("mileVal").value = S.mileVal;
 }
 function toggle(id) {
-  S.owned = S.owned.includes(id) ? S.owned.filter(x => x != id) : [...S.owned, id]; save();
+  S.owned = S.owned.includes(id) ? S.owned.filter(x => x != id) : [...S.owned, id]; save(); renderPromos();
   for (const p of ["cond_", "pick_"]) { const el = $(p + id); if (el) el.style.display = S.owned.includes(id) ? "block" : "none"; }
 }
 function picks(c) { return S.picks[c.id] || c.choose.def; }
@@ -178,6 +178,28 @@ function dismissGuide() { S.guide = 1; save(); $("guide").style.display = "none"
 const q = new URLSearchParams(location.search);
 if (q.get("cat") && CATS.includes(q.get("cat"))) S.cat = q.get("cat");
 if (q.get("amt")) { $("amt").value = q.get("amt"); $("slider").value = toSlider(+q.get("amt")); }
+// Promos: promos.json is refreshed daily by a scheduled job (scripts/fetch-promos.mjs).
+let PROMOS = [];
+const todayPH = () => new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
+function renderPromos() {
+  const el = $("promos"), banks = new Set(CARDS.filter(c => S.owned.includes(c.id)).map(c => c.bank)), t = todayPH();
+  const live = PROMOS.filter(p => banks.has(p.bank) && (!p.validUntil || p.validUntil >= t));
+  const here = live.filter(p => p.category == S.cat);
+  if (!live.length) { el.style.display = "none"; return; }
+  const row = p => {
+    const days = p.validUntil ? Math.round((new Date(p.validUntil) - new Date(t)) / 864e5) : null;
+    const when = days == null ? "" : days <= 7 ? ` · <b>${days ? `ends in ${days} day${days > 1 ? "s" : ""}` : "ends today"}</b>`
+      : ` · until ${new Date(p.validUntil).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}`;
+    return `<a class="promo" href="${esc(p.url)}" target="_blank" rel="noopener"><b>${esc(p.title)}</b><span class="small">${esc(p.bank)}${p.cards == "credit+debit" ? " credit &amp; debit" : " credit cards"}${when}</span></a>`;
+  };
+  el.innerHTML = `<b>🎁 Promos for your cards</b>
+    ${here.length ? `<p class="small">${esc(S.cat)} promos from your banks. These can beat the points above, so check the terms.</p>${here.map(row).join("")}`
+      : `<p class="small">No ${esc(S.cat.toLowerCase())} promos from your banks right now.</p>`}
+    ${live.length > here.length ? `<details class="how"><summary>All ${live.length} promos from your banks</summary>${live.map(row).join("")}</details>` : ""}`;
+  el.style.display = "block";
+}
+fetch("promos.json").then(r => r.json()).then(d => { PROMOS = d.promos || []; renderPromos(); }).catch(() => {});
+
 renderCats(); renderQuick(); renderList(); cheatSheet(); guide();
 if (!S.owned.length) show("setup"); else if ($("amt").value) compare(false);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
