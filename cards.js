@@ -25,7 +25,8 @@ const MERCHANTS = {
   petron: { name: "Petron", cat: "Fuel" },
   shell: { name: "Shell", cat: "Fuel" },
   meralco: { name: "Meralco", cat: "Bills" },
-  shopee: { name: "Shopee", cat: "Online" }
+  shopee: { name: "Shopee", cat: "Online" },
+  zalora: { name: "ZALORA", cat: "Online" }
 };
 
 // Merchant keyword → merchant key or category
@@ -38,13 +39,15 @@ const MERCH_WORDS = {
   sandr: "Groceries", savemore: "Groceries", rustans: "Groceries", alfamart: "Groceries", "711": "Groceries",
   mercury: "Drugstore", watsons: "Drugstore", southstar: "Drugstore",
   caltex: "Fuel", seaoil: "Fuel", cleanfuel: "Fuel",
-  lazada: "Online", zalora: "Online", tiktok: "Online",
+  lazada: "Online", zalora: "zalora", tiktok: "Online",
   agoda: "Travel", booking: "Travel", airasia: "Travel",
   globe: "Bills", smart: "Bills", pldt: "Bills", converge: "Bills", maynilad: "Bills", manilawater: "Bills"
 };
 
 const BPI_CASH = { kind: "cash", val: 0.05, label: "Shopping credits (20,000 pts = ₱1,000)" };
-const MB_VOUCHER = { kind: "cash", val: 1000 / 23340, label: "eVoucher (23,340 pts = ₱1,000)" };
+const RCBC_CASH = { kind: "cash", val: 1000 / 6600, label: "Cash credit (6,600 pts = ₱1,000)" };
+const RCBC_MILES = { kind: "miles", ppm: 5, prog: "Mabuhay Miles / Asia Miles / airasia" };
+const MB_VOUCHER ={ kind: "cash", val: 1000 / 23340, label: "eVoucher (23,340 pts = ₱1,000)" };
 
 const CARDS = [
   // ───── BPI ─────
@@ -217,7 +220,42 @@ const CARDS = [
     src: "https://www.eastwestbanker.com/cards/creditcards/eastwest-jcb-reward" },
   { id: "ew_infinite", bank: "EastWest", name: "EastWest Priority Visa Infinite", type: "points", per: 10,
     redeem: [{ kind: "cash", val: 0.05, label: "Cash rebate (20,000 pts = ₱1,000)" }],
-    src: "https://www.eastwestbanker.com/sites/default/files/2026-03/infinite-rewards-catalog-2026.pdf" }
+    src: "https://www.eastwestbanker.com/sites/default/files/2026-03/infinite-rewards-catalog-2026.pdf" },
+
+  // ───── RCBC ─────
+  // Standard RCBC Rewards: ₱36 per point at "discretionary" merchants, ₱125 at supermarkets/drugstores/gas, ₱250 on bills via Fast BillsPay.
+  { id: "rcbc_std", bank: "RCBC", name: "RCBC Classic / Gold / Platinum / World Mastercard", type: "points", per: 36,
+    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 },
+    redeem: [RCBC_CASH, RCBC_MILES],
+    src: "https://rcbccredit.com/features-and-benefits/rewards/rewards-points" },
+  { id: "rcbc_jcb", bank: "RCBC", name: "RCBC JCB Classic / Gold / Platinum", type: "points", per: 36,
+    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 },
+    redeem: [RCBC_CASH, RCBC_MILES],
+    note: "Bonus points on spend in Japan aren't modelled.",
+    src: "https://rcbccredit.com/features-and-benefits/rewards/rewards-points" },
+  { id: "rcbc_flex", bank: "RCBC", name: "RCBC Flex Visa", type: "points", per: 36,
+    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 }, mult: { Dining: 2, Travel: 2 },
+    redeem: [RCBC_CASH, RCBC_MILES],
+    note: "2x on 2 categories you choose (dining, clothing, travel or transportation). Assumes dining and travel.",
+    src: "https://rcbccredit.com/credit-cards" },
+  { id: "rcbc_flexgold", bank: "RCBC", name: "RCBC Flex Gold Visa", type: "points", per: 36,
+    perCat: { Groceries: 125, Drugstore: 125, Fuel: 125, Bills: 250 }, mult: { Groceries: 2, Fuel: 2, Travel: 2 },
+    redeem: [RCBC_CASH, RCBC_MILES],
+    note: "2x on 3 categories you choose (grocery, gas, department store, appliances or travel). Assumes grocery, gas and travel.",
+    src: "https://rcbccredit.com/credit-cards" },
+  { id: "rcbc_visaplat", bank: "RCBC", name: "RCBC Visa Platinum (Preferred AIRMILES)", type: "miles", per: 48,
+    perCat: { Overseas: 25 },
+    redeem: [{ kind: "miles", ppm: 1, prog: "Mabuhay Miles / Asia Miles / airasia" }],
+    note: "Preferred AIRMILES convert 1:1. Local and overseas rates are from Wise's review, not RCBC's page.",
+    src: "https://wise.com/ph/blog/mabuhay-miles-credit-card" },
+  { id: "rcbc_infinite", bank: "RCBC", name: "RCBC Visa Infinite", type: "points", per: 30, mult: { Online: 3, Overseas: 5 },
+    redeem: [RCBC_CASH, RCBC_MILES],
+    note: "3x local online, 5x overseas. RCBC doesn't publish this card's redemption rate, so standard RCBC rates are assumed.",
+    src: "https://rcbccredit.com/credit-cards/premium-cards/visa-infinite-card" },
+  { id: "rcbc_zalora", bank: "RCBC", name: "RCBC ZALORA Credit Card", type: "cash",
+    rates: { Other: 0 }, merch: { zalora: 0.06 },
+    note: "Up to 6% ZALORA cashback online. Other spend earns RCBC points, but the rate isn't published, so it's counted as zero.",
+    src: "https://rcbccredit.com/credit-cards/co-branded-cards" }
 ];
 
-const BANKS = ["BPI", "BDO", "UnionBank", "Metrobank", "Maya", "MariBank", "PNB", "EastWest"];
+const BANKS = ["BPI", "BDO", "UnionBank", "Metrobank", "Maya", "MariBank", "PNB", "EastWest", "RCBC"];

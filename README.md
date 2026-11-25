@@ -14,7 +14,7 @@ Live: https://chairell.github.io/kaskas/
 - **Cheat sheet**, recent amounts, sharing, an Add to Home Screen guide, and offline support.
 
 ## Card data
-`cards.js` holds 41 cards from BPI, BDO, UnionBank, Metrobank, Maya, MariBank, PNB and EastWest, compiled from each bank's website and published terms on Nov 25, 2026. Every card links to its source.
+`cards.js` holds 48 cards from BPI, BDO, UnionBank, Metrobank, Maya, MariBank, PNB, EastWest and RCBC, compiled from each bank's website and published terms on Nov 25, 2026. Every card links to its source.
 
 Not modelled: limited-time promos, annual caps beyond a simple per-cycle limit, and cards with no published earn rate (for example PNB Ze-Lo). Rates change often, so verify before relying on a ranking.
 
