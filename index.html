@@ -181,7 +181,7 @@ body:not(.c) .dock{display:none}
 <div class="dock" id="dock"><div class="dock-in">
   <div class="hscroll" id="cats"></div>
   <div class="amtrow">
-    <label class="amtbox"><span>₱</span><input id="amt" type="number" inputmode="decimal" placeholder="0" oninput="amtTyped()" onchange="compare(true)" enterkeyhint="done"></label>
+    <label class="amtbox"><span>₱</span><input id="amt" type="text" inputmode="decimal" autocomplete="off" placeholder="0" oninput="amtTyped()" onchange="compare(true)" enterkeyhint="done"></label>
     <div class="hscroll recents" id="quick"></div>
   </div>
   <input id="slider" type="range" min="0" max="1000" step="1" value="0" oninput="slid()" onchange="compare(true)" aria-label="Amount">

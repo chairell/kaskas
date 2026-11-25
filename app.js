@@ -17,9 +17,24 @@ const esc = s => String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;
 const MAXAMT = 100000;
 const toAmt = v => { const a = (v / 1000) ** 2 * MAXAMT; return a < 1000 ? Math.round(a / 10) * 10 : a < 10000 ? Math.round(a / 50) * 50 : Math.round(a / 500) * 500; };
 const toSlider = a => Math.min(1000, Math.round(Math.sqrt(a / MAXAMT) * 1000));
-function slid() { $("amt").value = toAmt(+$("slider").value) || ""; compare(false); }
-function amtTyped() { $("slider").value = toSlider(+$("amt").value || 0); compare(false); }
-function setAmt(a) { $("amt").value = a; $("slider").value = toSlider(a); compare(true); }
+// The amount box shows thousands separators (12,500), so read and write it through these helpers.
+const getAmt = () => +$("amt").value.replace(/[^\d.]/g, "") || 0;
+const fmtAmt = a => a ? a.toLocaleString("en-PH", { maximumFractionDigits: 2 }) : "";
+function setAmtBox(a) { $("amt").value = fmtAmt(a); }
+function slid() { setAmtBox(toAmt(+$("slider").value)); compare(false); }
+function amtTyped() {
+  // Reformat while typing and keep the cursor after the same digit.
+  const el = $("amt"), pos = el.selectionStart ?? el.value.length;
+  const digitsBefore = el.value.slice(0, pos).replace(/[^\d.]/g, "").length;
+  let raw = el.value.replace(/[^\d.]/g, "").replace(/(\..*)\./g, "$1");   // one decimal point only
+  const [whole, dec] = raw.split(".");
+  el.value = (whole ? (+whole).toLocaleString("en-PH") : (dec != null ? "0" : "")) + (dec != null ? "." + dec.slice(0, 2) : "");
+  let i = 0, seen = 0;
+  while (i < el.value.length && seen < digitsBefore) { if (/[\d.]/.test(el.value[i])) seen++; i++; }
+  try { el.setSelectionRange(i, i); } catch (e) {}
+  $("slider").value = toSlider(getAmt()); compare(false);
+}
+function setAmt(a) { setAmtBox(a); $("slider").value = toSlider(a); compare(true); }
 
 
 // ── Navigation ──
@@ -180,7 +195,7 @@ const breakdown = (x, a) => `<table><tr><td>Earn</td><td>${esc(x.earned)}</td></
 
 // final = true when the user lets go of the slider, finishes typing or picks a recent amount (saves it to recents).
 function compare(final) {
-  const a = +$("amt").value;
+  const a = getAmt();
   const mine = CARDS.filter(c => S.owned.includes(c.id));
   cheatSheet(mine, !a); renderPromos();
   if (!mine.length) {
@@ -279,7 +294,7 @@ fetch("promos.json").then(r => r.json()).then(d => {
 
 const q = new URLSearchParams(location.search);
 if (q.get("cat") && CATS.includes(q.get("cat"))) S.cat = q.get("cat");
-if (q.get("amt")) { $("amt").value = q.get("amt"); $("slider").value = toSlider(+q.get("amt")); }
+if (q.get("amt")) { setAmtBox(+q.get("amt")); $("slider").value = toSlider(+q.get("amt")); }
 renderCats(); renderQuick(); renderCards(); showGuide(false); compare(false); sizeDock();
 addEventListener("resize", sizeDock);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
