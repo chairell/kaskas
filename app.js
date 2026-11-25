@@ -13,21 +13,28 @@ const pct = (v, a) => (v / a * 100).toFixed(2) + "%";
 const num = n => (+n.toFixed(2)).toLocaleString("en-PH");
 const esc = s => String(s).replace(/[&<>"']/g, ch => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[ch]));
 
+const MAXAMT = 100000;
+const toAmt = v => { const a = (v / 1000) ** 2 * MAXAMT; return a < 1000 ? Math.round(a / 10) * 10 : a < 10000 ? Math.round(a / 50) * 50 : Math.round(a / 500) * 500; };
+const toSlider = a => Math.min(1000, Math.round(Math.sqrt(a / MAXAMT) * 1000));
+function slid() { $("amt").value = toAmt(+$("slider").value) || ""; compare(false); }
+function amtTyped() { $("slider").value = toSlider(+$("amt").value || 0); compare(false); }
+function setAmt(a) { $("amt").value = a; $("slider").value = toSlider(a); compare(true); }
+
 function show(v) {
   $("pos").style.display = v == "pos" ? "" : "none";
   $("setup").style.display = v == "setup" ? "block" : "none";
   if (v == "pos") cheatSheet();
   window.scrollTo(0, 0);
 }
-function setCat(c) { S.cat = c; S.merch = ""; save(); renderCats(); renderMerch(); }
+function setCat(c) { S.cat = c; S.merch = ""; save(); renderCats(); renderMerch(); compare(false); }
 function renderCats() {
   $("cats").innerHTML = CATS.map(c => `<button class="${c == S.cat ? "on" : ""}" onclick="setCat('${c}')">${c}</button>`).join("");
 }
 function renderMerch() {
-  $("merchTag").innerHTML = S.merch ? `<span class="merch">🏪 ${esc(MERCHANTS[S.merch].name)} bonus applies <a href="#" onclick="S.merch='';save();renderMerch();return false">✕</a></span>` : "";
+  $("merchTag").innerHTML = S.merch ? `<span class="merch">🏪 ${esc(MERCHANTS[S.merch].name)} bonus applies <a href="#" onclick="S.merch='';save();renderMerch();compare(false);return false">✕</a></span>` : "";
 }
 function renderQuick() {
-  $("quick").innerHTML = S.amts.map(a => `<button onclick="amt.value=${a}">${peso(a)}</button>`).join("");
+  $("quick").innerHTML = S.amts.map(a => `<button onclick="setAmt(${a})">${peso(a)}</button>`).join("");
 }
 function renderList() {
   $("cardlist").innerHTML = BANKS.map(b => {
@@ -96,9 +103,12 @@ function calc(c, cat, a, m) {
     conv: best.conv, redeem: best.how, value: v, notes };
 }
 
-function compare() {
-  const a = +$("amt").value; if (!a) return;
-  S.amts = [a, ...S.amts.filter(x => x != a)].slice(0, 4); save(); renderQuick();
+// final = true when the user taps the button, lets go of the slider or picks a recent amount.
+// Live updates (dragging, typing, changing category) skip saving and scrolling.
+function compare(final) {
+  const a = +$("amt").value;
+  if (!a) { if (!final) $("results").innerHTML = ""; return; }
+  if (final) { S.amts = [a, ...S.amts.filter(x => x != a)].slice(0, 4); save(); renderQuick(); }
   const mine = CARDS.filter(c => S.owned.includes(c.id));
   if (!mine.length) { $("results").innerHTML = '<div class="card">Pick your cards first under 💳 My cards.</div>'; return; }
   const r = mine.map(c => ({ c, ...calc(c, S.cat, a, S.merch) })).sort((x, y) => y.value - x.value);
@@ -109,7 +119,7 @@ function compare() {
     <p class="small"><a href="${x.c.src}" target="_blank" rel="noopener">Source</a></p>
     ${i == 0 ? `<button class="ghost" onclick="shareResult()">Share this result</button>` : ""}</div>`).join("");
   window._last = { r, a };
-  $("results").scrollIntoView({ behavior: "smooth" });
+  if (final) $("results").scrollIntoView({ behavior: "smooth" });
 }
 function cheatSheet() {
   const mine = CARDS.filter(c => S.owned.includes(c.id));
@@ -125,7 +135,7 @@ function merchantHint() {
   for (const w of words) if (k.startsWith(w) || (w.length > 3 && k.includes(w))) {
     const t = MERCH_WORDS[w];
     if (MERCHANTS[t]) { S.cat = MERCHANTS[t].cat; S.merch = t; } else { S.cat = t; S.merch = ""; }
-    save(); renderCats(); renderMerch(); return;
+    save(); renderCats(); renderMerch(); compare(false); return;
   }
 }
 function locHint() {
@@ -161,7 +171,7 @@ $("merchlist").innerHTML = Object.values(MERCHANTS).map(m => `<option value="${e
 const q = new URLSearchParams(location.search);
 if (q.get("cat") && CATS.includes(q.get("cat"))) S.cat = q.get("cat");
 if (q.get("m") && MERCHANTS[q.get("m")]) S.merch = q.get("m");
-if (q.get("amt")) $("amt").value = q.get("amt");
+if (q.get("amt")) { $("amt").value = q.get("amt"); $("slider").value = toSlider(+q.get("amt")); }
 renderCats(); renderMerch(); renderQuick(); renderList(); cheatSheet(); guide();
-if (!S.owned.length) show("setup");
+if (!S.owned.length) show("setup"); else if ($("amt").value) compare(false);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});

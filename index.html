@@ -23,6 +23,7 @@ header button{width:auto;background:#fff3;color:#fff;margin:0;padding:8px 12px;f
 main{padding:14px;max-width:520px;margin:auto}
 .card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 0 var(--ink)}
 label{font-weight:600;font-size:14px}
+input[type=range]{padding:0;border:0;accent-color:var(--hot);height:36px;margin-top:10px}
 input,select,button{font-size:17px;padding:12px;border-radius:12px;border:2px solid var(--ink);width:100%;margin-top:6px;font-family:inherit;background:#fff;color:var(--ink)}
 button{background:var(--ink);color:#fff;font-weight:700;cursor:pointer}
 .big{background:var(--hot);border-color:var(--hot);font-size:19px}
@@ -40,6 +41,7 @@ details summary{font-weight:800;padding:8px 0;cursor:pointer}
 .row input{width:22px;height:22px;margin:2px 0 0;flex:none}
 .cond{margin:-4px 0 8px 32px;font-size:13px;font-weight:500;color:var(--mut)}
 .cond input{width:18px;height:18px;margin:0 6px 0 0;vertical-align:middle}
+.ticks{position:relative;height:18px}.ticks span{position:absolute;transform:translateX(-50%)}.ticks span:first-child,.ticks span:last-child{transform:none}
 #guide,#setup{display:none}
 a{color:var(--hot)}
 </style></head><body>
@@ -53,9 +55,11 @@ a{color:var(--hot)}
   <datalist id="merchlist"></datalist>
   <div id="merchTag"></div>
   <div class="chips" id="cats"></div>
-  <label style="display:block;margin-top:12px">How much? (₱)<input id="amt" type="number" inputmode="decimal" placeholder="0"></label>
+  <label style="display:block;margin-top:12px">How much? (₱)<input id="amt" type="number" inputmode="decimal" placeholder="0" oninput="amtTyped()"></label>
+  <input id="slider" type="range" min="0" max="1000" step="1" value="0" oninput="slid()" onchange="compare(true)" aria-label="Amount slider">
+  <div class="small ticks"><span style="left:0">₱0</span><span style="left:10%">₱1k</span><span style="left:31.6%">₱10k</span><span style="left:70.7%">₱50k</span><span style="right:0">₱100k</span></div>
   <div class="chips" id="quick"></div>
-  <button class="big" onclick="compare()">Which card should I use? 💳</button>
+  <button class="big" onclick="compare(true)">Which card should I use? 💳</button>
   <button class="ghost" onclick="locHint()">📍 Guess the shop from my location (optional)</button>
  </div>
  <div id="results"></div>
