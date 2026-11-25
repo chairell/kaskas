@@ -1,6 +1,6 @@
 let S;
 try { S = JSON.parse(localStorage.kaskas || "null"); } catch (e) { S = null; }
-S = Object.assign({ owned: [], cat: "Dining", merch: "", amts: [], guide: 0, mileVal: 0.5, conds: {}, picks: {} }, S || {});
+S = Object.assign({ owned: [], cat: "Dining", merch: "", amts: [], guide: 0, mileVal: 0.5, prog: "", conds: {}, picks: {} }, S || {});
 S.picks = S.picks || {};
 S.owned = S.owned.filter(id => CARDS.some(c => c.id == id));   // drop cards from older versions
 if (!CATS.includes(S.cat)) S.cat = "Dining";
@@ -49,7 +49,7 @@ function go(t) {
   $("subtitle").textContent = t == "cards" ? `${S.owned.length} card${S.owned.length == 1 ? "" : "s"} in your wallet` : TITLES[t][1];
   if (t == "compare") { compare(false); }
   if (t == "cards") renderCards();
-  if (t == "settings") $("mileVal").value = S.mileVal;
+  if (t == "settings") { $("mileVal").value = S.mileVal; $("prog").value = S.prog; }
   window.scrollTo(0, 0);
   sizeDock();
 }
@@ -128,6 +128,17 @@ function togglePick(id, opt) {
   save(); renderCards();
 }
 function toggleCond(id) { S.conds[id] = !S.conds[id]; save(); }
+// Miles programmes, matched against each redemption option's programme name in cards.js.
+const PROGS = [
+  { k: "mabuhay", label: "PAL Mabuhay Miles", re: /mabuhay/i },
+  { k: "asia", label: "Asia Miles", re: /asia miles/i },
+  { k: "krisflyer", label: "KrisFlyer", re: /krisflyer/i },
+  { k: "airasia", label: "airasia rewards", re: /airasia/i },
+  { k: "maya", label: "Maya Miles", re: /maya miles/i }
+];
+const progOk = name => { const p = PROGS.find(x => x.k == S.prog); return !p || p.re.test(name || ""); };
+const progLabel = () => (PROGS.find(x => x.k == S.prog) || {}).label || "";
+function setProg() { S.prog = $("prog").value; save(); compare(false); toast(S.prog ? `Comparing with ${progLabel()} only` : "Comparing all miles programmes"); }
 function setMileVal() { const v = +$("mileVal").value; if (v >= 0) { S.mileVal = v; save(); toast("Saved"); } }
 function resetCards() {
   if (!confirm("Remove all cards from your wallet?")) return;
@@ -169,12 +180,17 @@ function calc(c, cat, a, m) {
     ? { o, v: units * o.val, conv: `1 ${unit} = ₱${num(o.val)}`, how: o.label }
     : { o, v: units / o.ppm * S.mileVal, conv: o.ppm == 1 ? (unit == "mile" ? "None — earned as miles directly" : `1 ${unit} = 1 mile`) : `${num(o.ppm)} ${unit}s = 1 ${o.prog.split(" (")[0]} mile`,
         how: `${num(units / o.ppm)} ${o.prog} at ₱${num(S.mileVal)}/mile` });
-  const best = opts.reduce((x, y) => (y.v > x.v ? y : x));
+  // If the user collects one miles programme, other programmes only count when the card has nothing else.
+  const mine = opts.filter(x => x.o.kind == "cash" || progOk(x.o.prog));
+  const pool = mine.length ? mine : opts;
+  const best = pool.reduce((x, y) => (y.v > x.v ? y : x));
+  if (best.o.kind == "miles" && !progOk(best.o.prog)) badges.push({ t: `Earns ${best.o.prog.split(" (")[0]}`, warn: true,
+    d: `This card only earns ${best.o.prog.split(" (")[0]}, not the ${progLabel()} you collect. Its value assumes you'd still use those miles.` });
   let v = best.v;
   if (c.cap && v > c.cap) { v = c.cap; badges.unshift({ t: "Capped", warn: true, d: `This purchase would earn more, but the cap limits it to ${peso0(c.cap)}.` }); }
-  if (best.o.kind == "miles") badges.push({ t: `Miles at ${peso(S.mileVal)}`, d: `Value assumes 1 airline mile = ${peso(S.mileVal)}. Change it in My cards.` });
+  if (best.o.kind == "miles") badges.push({ t: `Miles at ${peso(S.mileVal)}`, d: `Value assumes 1 airline mile = ${peso(S.mileVal)}. Change it in Settings.` });
   if (mult > 1) badges.push({ t: `${mult}x ${cat}`, good: true, d: `This card earns ${mult}x points on ${cat}.` });
-  const other = opts.filter(x => x !== best).map(x => `${x.how}: ${peso(x.v)}`);
+  const other = opts.filter(x => x !== best).map(x => `${x.how}: ${peso(x.v)}${pool.includes(x) ? "" : " (not your programme)"}`);
   if (other.length) notes.push("Other option — " + other.join("; ") + ".");
   return { earned: `${num(units)} ${unit}s (₱${per} per ${unit}${mult > 1 ? `, ${mult}x on ${cat}` : ""})`,
     conv: best.conv, redeem: best.how, value: v, notes, badges };
