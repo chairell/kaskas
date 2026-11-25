@@ -29,6 +29,9 @@ jobs:
           unionbank-cc https://www.unionbankph.com/cards/credit-card
           maribank https://www.maribank.ph/
           LIST
+          # BDO's deals site is an Angular app; keep its main bundle to find the data endpoint.
+          js=$(grep -o 'main\.[a-f0-9]*\.js' pages/bdo.html | head -1)
+          [ -n "$js" ] && curl -sSL -m 30 -A "$UA" -o pages/bdo-main.js "https://www.deals.bdo.com.ph/$js"
       - name: Push to the snapshots branch
         run: |
           cd pages
