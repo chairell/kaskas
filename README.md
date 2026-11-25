@@ -5,7 +5,8 @@
 Live: https://chairell.github.io/kaskas/
 
 ## What it does
-- **My cards**: tick the cards in your wallet, grouped by bank. They're saved on your phone and pre-selected next time.
+- **Three tabs**: Compare, My cards and Settings, with a bottom tab bar, dark mode and native-style touch behaviour.
+- **My cards**: a searchable list with a switch for each card. Your cards are saved on your phone and stay on next time.
 - **Checkout check**: type the shop or pick a category, enter the amount, and your cards are ranked by value.
 - **Earn → Conversion → Redemption**: each card shows how many points, miles or pesos you earn, how they convert, and what they're worth, with the % back.
 - **Merchant bonuses**: Landers, Robinsons, Puregold, Cebu Pacific, PAL, Singapore Airlines, Petron, Shell, Meralco and Shopee are recognised.

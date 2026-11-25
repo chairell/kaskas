@@ -4,7 +4,7 @@
   "description": "Find out which of your credit cards earns the most rewards.",
   "start_url": "./",
   "display": "standalone",
-  "background_color": "#fff8ef",
+  "background_color": "#f6f3ef",
   "theme_color": "#ff4d2e",
   "icons": [
     { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },

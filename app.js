@@ -21,45 +21,90 @@ function slid() { $("amt").value = toAmt(+$("slider").value) || ""; compare(fals
 function amtTyped() { $("slider").value = toSlider(+$("amt").value || 0); compare(false); }
 function setAmt(a) { $("amt").value = a; $("slider").value = toSlider(a); compare(true); }
 
-function show(v) {
-  $("pos").style.display = v == "pos" ? "" : "none";
-  $("setup").style.display = v == "setup" ? "block" : "none";
-  if (v == "pos") cheatSheet();
+
+// ── Navigation ──
+const TITLES = { compare: ["Kaskas!", "Which card should you swipe?"], cards: ["My cards", "Turn on the cards in your wallet"], settings: ["Settings", ""] };
+let tab = "compare";
+function go(t) {
+  if (t == tab) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  tab = t;
+  for (const v of ["compare", "cards", "settings"]) { $("v-" + v).classList.toggle("active", v == t); $("t-" + v).classList.toggle("on", v == t); }
+  document.body.classList.toggle("c", t == "compare");
+  $("title").textContent = TITLES[t][0]; $("title").classList.toggle("brand", t == "compare");
+  $("subtitle").textContent = t == "cards" ? `${S.owned.length} of ${CARDS.length} cards on` : TITLES[t][1];
+  if (t == "compare") { compare(false); }
+  if (t == "cards") renderCards();
+  if (t == "settings") $("mileVal").value = S.mileVal;
   window.scrollTo(0, 0);
+  sizeDock();
 }
+function sizeDock() { document.documentElement.style.setProperty("--dock-h", $("dock").offsetHeight + "px"); }
+let toastT;
+function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 2600); }
+
+// ── Compare dock ──
+const ICON = { Dining: "🍽️", Groceries: "🛒", Drugstore: "💊", Fuel: "⛽", Shopping: "🛍️", Online: "📦", Transport: "🚕", Travel: "✈️", Overseas: "🌏", Bills: "🧾", Other: "💳" };
 function setCat(c) { S.cat = c; save(); renderCats(); compare(false); }
 function renderCats() {
-  $("cats").innerHTML = CATS.map(c => `<button class="${c == S.cat ? "on" : ""}" onclick="setCat('${c}')">${c}</button>`).join("");
+  $("cats").innerHTML = CATS.map(c => `<button class="chip ${c == S.cat ? "on" : ""}" onclick="setCat('${c}')">${ICON[c] || ""} ${c}</button>`).join("");
+  const on = $("cats").querySelector(".on"); if (on) on.scrollIntoView({ block: "nearest", inline: "nearest" });
 }
 function renderQuick() {
-  $("quick").innerHTML = S.amts.map(a => `<button onclick="setAmt(${a})">${peso(a)}</button>`).join("");
+  $("quick").innerHTML = S.amts.map(a => `<button class="chip" onclick="setAmt(${a})">${peso0(a)}</button>`).join("");
 }
-function renderList() {
-  $("cardlist").innerHTML = BANKS.map(b => {
-    const cards = CARDS.filter(c => c.bank == b);
-    const n = cards.filter(c => S.owned.includes(c.id)).length;
-    return `<details ${n ? "open" : ""}><summary>${b}${n ? ` · ${n} selected` : ""}</summary>` + cards.map(c => `
-      <label class="row"><input type="checkbox" ${S.owned.includes(c.id) ? "checked" : ""} onchange="toggle('${c.id}')"> <span>${esc(c.name)}</span></label>
-      ${c.choose ? `<div class="cond" id="pick_${c.id}" style="display:${S.owned.includes(c.id) ? "block" : "none"}">Your ${c.choose.n} bonus categories (${c.choose.mult}x):<br>${Object.keys(c.choose.options).map(o => `<label style="display:inline-block;margin:4px 10px 0 0"><input type="checkbox" ${picks(c).includes(o) ? "checked" : ""} onchange="togglePick('${c.id}','${o}',this)">${esc(o)}</label>`).join("")}</div>` : ""}
-      ${c.cond ? `<label class="cond" id="cond_${c.id}" style="display:${S.owned.includes(c.id) ? "block" : "none"}"><input type="checkbox" ${S.conds[c.id] ? "checked" : ""} onchange="toggleCond('${c.id}')">${esc(c.cond.label)}</label>` : ""}`).join("") + "</details>";
-  }).join("");
-  $("mileVal").value = S.mileVal;
+
+// ── My cards ──
+const BANK_COLOR = { BPI: "#b11116", BDO: "#0033a0", UnionBank: "#f37021", Metrobank: "#1f4eae", Maya: "#00a76f", MariBank: "#ff7a1a", PNB: "#00296b", EastWest: "#6c2d82", RCBC: "#0072bc" };
+const sw = (on, fn, sm) => `<label class="switch ${sm ? "sm" : ""}" onclick="event.stopPropagation()"><input type="checkbox" ${on ? "checked" : ""} onchange="${fn}"><i></i></label>`;
+function cardOptions(c) {
+  let h = "";
+  if (c.choose) h += `<div class="ol">Your ${c.choose.n} bonus categories (${c.choose.mult}x points)</div><div class="chips">${Object.keys(c.choose.options).map(o =>
+    `<button class="chip ${picks(c).includes(o) ? "on" : ""}" onclick="togglePick('${c.id}','${o}')">${esc(o)}</button>`).join("")}</div>`;
+  if (c.cond) h += `<div class="orow"><span>${esc(c.cond.label)}</span>${sw(S.conds[c.id], `toggleCond('${c.id}')`, 1)}</div>`;
+  return h ? `<div class="opts">${h}</div>` : "";
+}
+function cardRow(c, withOpts) {
+  const on = S.owned.includes(c.id);
+  return `<div class="item"><div class="row"><span class="dot" style="background:${BANK_COLOR[c.bank] || "#999"}"></span>
+    <div class="lbl">${esc(c.name)}<small>${esc(c.bank)} · ${c.type == "cash" ? "Cashback" : c.type == "miles" ? "Airline miles" : "Points"}</small></div>
+    ${sw(on, `toggle('${c.id}')`)}</div>${withOpts && on ? cardOptions(c) : ""}</div>`;
+}
+function renderCards() {
+  const q = $("q").value.trim().toLowerCase();
+  const match = c => !q || (c.name + " " + c.bank).toLowerCase().includes(q);
+  const mine = CARDS.filter(c => S.owned.includes(c.id) && match(c));
+  let h = "";
+  if (mine.length) h += `<div class="sect">In your wallet</div><div class="group">${mine.map(c => cardRow(c, true)).join("")}</div>`;
+  for (const b of BANKS) {
+    const list = CARDS.filter(c => c.bank == b && !S.owned.includes(c.id) && match(c));
+    if (list.length) h += `<div class="sect">${b}</div><div class="group">${list.map(c => cardRow(c, false)).join("")}</div>`;
+  }
+  if (!h) h = `<div class="empty"><div class="big">🔍</div><h2>No cards found</h2><p class="small">Try a bank name like "BPI" or a card like "Platinum".</p></div>`;
+  $("cardsList").innerHTML = h;
+  $("ownedCount").textContent = S.owned.length || "";
+  if (tab == "cards") $("subtitle").textContent = `${S.owned.length} of ${CARDS.length} cards on`;
 }
 function toggle(id) {
-  S.owned = S.owned.includes(id) ? S.owned.filter(x => x != id) : [...S.owned, id]; save();
-  for (const p of ["cond_", "pick_"]) { const el = $(p + id); if (el) el.style.display = S.owned.includes(id) ? "block" : "none"; }
+  const on = !S.owned.includes(id);
+  S.owned = on ? [...S.owned, id] : S.owned.filter(x => x != id); save();
+  // let the switch animate before the card moves between sections
+  setTimeout(renderCards, 220);
+  toast(on ? "Added to your wallet" : "Removed from your wallet");
 }
 function picks(c) { return S.picks[c.id] || c.choose.def; }
-function togglePick(id, opt, box) {
+function togglePick(id, opt) {
   const c = CARDS.find(x => x.id == id), cur = picks(c);
-  if (box.checked) {
-    if (cur.length >= c.choose.n) { box.checked = false; return alert(`You can pick ${c.choose.n}. Untick one first.`); }
-    S.picks[id] = [...cur, opt];
-  } else S.picks[id] = cur.filter(x => x != opt);
-  save();
+  if (cur.includes(opt)) S.picks[id] = cur.filter(x => x != opt);
+  else if (cur.length >= c.choose.n) return toast(`You can pick ${c.choose.n}. Tap one to remove it first.`);
+  else S.picks[id] = [...cur, opt];
+  save(); renderCards();
 }
 function toggleCond(id) { S.conds[id] = !S.conds[id]; save(); }
-function setMileVal() { const v = +$("mileVal").value; if (v >= 0) { S.mileVal = v; save(); } }
+function setMileVal() { const v = +$("mileVal").value; if (v >= 0) { S.mileVal = v; save(); toast("Saved"); } }
+function resetCards() {
+  if (!confirm("Remove all cards from your wallet?")) return;
+  S.owned = []; S.conds = {}; S.picks = {}; save(); renderCards(); toast("Cleared");
+}
 
 // ── The engine: earn → conversion → redemption value ──
 // Returns the value plus the three layers, notes for the breakdown, and short badges for caps and conditions.
@@ -119,65 +164,75 @@ const breakdown = (x, a) => `<table><tr><td>Earn</td><td>${esc(x.earned)}</td></
   ${x.notes.length ? `<p class="small">${x.notes.map(esc).join("<br>")}</p>` : ""}
   <p class="small"><a href="${x.c.src}" target="_blank" rel="noopener">Source: ${esc(x.c.bank)} terms</a></p>`;
 
-// final = true when the user taps the button, lets go of the slider or picks a recent amount.
-// Live updates (dragging, typing, changing category) skip saving and scrolling.
+
+// final = true when the user lets go of the slider, finishes typing or picks a recent amount (saves it to recents).
 function compare(final) {
   const a = +$("amt").value;
-  if (!a) { if (!final) $("results").innerHTML = ""; return; }
-  if (final) { S.amts = [a, ...S.amts.filter(x => x != a)].slice(0, 4); save(); renderQuick(); }
   const mine = CARDS.filter(c => S.owned.includes(c.id));
-  if (!mine.length) { $("results").innerHTML = '<div class="card">Pick your cards first under 💳 My cards.</div>'; return; }
+  cheatSheet(mine, !a);
+  if (!mine.length) {
+    $("results").innerHTML = `<div class="card empty"><div class="big">💳</div><h2>Add your cards first</h2>
+      <p class="small">Turn on the cards in your wallet. They stay saved on this phone.</p><button class="btn primary" onclick="go('cards')">Choose my cards</button></div>`;
+    return;
+  }
+  if (!a) {
+    $("results").innerHTML = `<div class="card empty"><div class="big">👇</div><h2>How much are you paying?</h2>
+      <p class="small">Pick a category, then slide or type the amount. Your best card shows up here.</p></div>`;
+    return;
+  }
+  if (final) { S.amts = [a, ...S.amts.filter(x => x != a)].slice(0, 5); save(); renderQuick(); }
   const r = mine.map(c => ({ c, ...calc(c, S.cat, a, S.merch) })).sort((x, y) => y.value - x.value);
   const w = r[0], open = $("results").querySelector("details.how[open]") && window._last && window._last.r[0].c.id == w.c.id;
   let h = `<div class="card win hero">
     <span class="badge">USE THIS ONE 🔥</span>
     <div class="bank">${esc(w.c.bank)}</div><div class="hname">${esc(w.c.name)}</div>
-    <div class="hval">${peso(w.value)} <span>back</span></div><div class="hpct">${pct(w.value, a)} on ${peso0(a)} · ${esc(S.cat)}</div>
+    <div class="hval">${peso(w.value)} <span>back</span></div><div class="hpct">${pct(w.value, a)} on ${peso0(a)} · ${ICON[S.cat] || ""} ${esc(S.cat)}</div>
     ${badgeHtml(w)}
     <details class="how" ${open ? "open" : ""}><summary>How is this calculated?</summary>${breakdown(w, a)}</details>
-    <button class="ghost" onclick="shareResult()">Share this result</button></div>`;
-  if (r.length > 1) h += `<div class="card"><b>Your other cards</b>${r.slice(1).map(x => {
+    <button class="btn plain" onclick="shareResult()">Share this result</button></div>`;
+  if (r.length > 1) h += `<div class="sect">Your other cards</div><div class="card">${r.slice(1).map(x => {
     const diff = w.value - x.value;
     return `<details class="rowd"><summary><div class="rtop"><span class="rname">${esc(x.c.name)}</span><span class="rpct">${x.value ? pct(x.value, a) : "0%"}</span></div>
       <div class="rsub">${x.value ? peso(x.value) + " back" : "Earns nothing here"}${diff > 0.005 ? ` · <b>${peso(diff)} less</b>` : " · same as top"}</div>${badgeHtml(x)}</summary>${breakdown(x, a)}</details>`;
   }).join("")}</div>`;
   $("results").innerHTML = h;
   window._last = { r, a };
-  if (final) $("results").scrollIntoView({ behavior: "smooth" });
 }
-function cheatSheet() {
-  const mine = CARDS.filter(c => S.owned.includes(c.id));
-  $("cheat").innerHTML = mine.length ? "<table>" + CATS.map(cat => {
+function cheatSheet(mine, openIt) {
+  if (!mine.length) { $("cheatWrap").innerHTML = ""; return; }
+  const wasOpen = $("cheatWrap").querySelector("details[open]");
+  $("cheatWrap").innerHTML = `<details class="card cheat" ${openIt || wasOpen ? "open" : ""}><summary>🧾 Cheat sheet</summary>
+    <p class="small" style="margin:6px 0 0">Your best card per category, for a ₱5,000 purchase.</p><table>${CATS.map(cat => {
     const b = mine.map(c => ({ c, v: calc(c, cat, 5000, "").value })).sort((x, y) => y.v - x.v)[0];
-    return `<tr><td>${cat}</td><td><b>${esc(b.c.name)}</b> · ${pct(b.v, 5000)}</td></tr>`;
-  }).join("") + "</table>" : '<p class="small">Pick your cards to see your cheat sheet.</p>';
+    return `<tr><td>${ICON[cat] || ""} ${cat}</td><td><b>${esc(b.c.name)}</b> · ${pct(b.v, 5000)}</td></tr>`;
+  }).join("")}</table></details>`;
 }
-function toast(t) { const d = document.createElement("div"); d.className = "card small"; d.textContent = t; $("results").prepend(d); setTimeout(() => d.remove(), 4000); }
 function baseUrl() { return location.href.split(/[?#]/)[0]; }
 function doShare(d) {
   if (navigator.share) navigator.share(d).catch(() => {});
-  else navigator.clipboard.writeText(`${d.text} ${d.url}`).then(() => toast("Link copied!"));
+  else navigator.clipboard.writeText(`${d.text} ${d.url}`).then(() => toast("Link copied"));
 }
 function shareApp() { doShare({ title: "Kaskas!", text: "Find out which of your cards earns the most on every purchase:", url: baseUrl() }); }
 function shareResult() {
   const { r, a } = window._last, w = r[0];
-  const where = S.cat.toLowerCase();
-  doShare({ title: "Kaskas!", text: `${w.c.name} got me ${pct(w.value, a)} back on ${where}. Which of your cards wins?`,
+  doShare({ title: "Kaskas!", text: `${w.c.name} got me ${pct(w.value, a)} back on ${S.cat.toLowerCase()}. Which of your cards wins?`,
     url: `${baseUrl()}?cat=${encodeURIComponent(S.cat)}&amt=${a}` });
 }
-function guide() {
-  if (S.guide || matchMedia("(display-mode: standalone)").matches || navigator.standalone) return;
+function showGuide(force) {
+  const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
+  if (!force && (S.guide || installed)) { $("guide").innerHTML = ""; return; }
+  if (force && installed) return toast("Kaskas! is already on your home screen 🎉");
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  $("gtext").textContent = ios
-    ? "In Safari, tap the Share button (the square with an arrow), then choose \"Add to Home Screen\"."
-    : "In Chrome, tap the ⋮ menu at the top, then \"Add to Home screen\" or \"Install app\".";
-  $("guide").style.display = "block";
+  $("guide").innerHTML = `<div class="card"><b>📲 Add Kaskas! to your home screen</b><p class="small">${ios
+    ? "In Safari, tap the Share button (the square with an arrow), then choose “Add to Home Screen”."
+    : "In Chrome, tap the ⋮ menu, then “Add to Home screen” or “Install app”."}</p><button class="btn plain" onclick="dismissGuide()">Got it</button></div>`;
+  if (force) go("compare");
 }
-function dismissGuide() { S.guide = 1; save(); $("guide").style.display = "none"; }
+function dismissGuide() { S.guide = 1; save(); $("guide").innerHTML = ""; }
 
 const q = new URLSearchParams(location.search);
 if (q.get("cat") && CATS.includes(q.get("cat"))) S.cat = q.get("cat");
 if (q.get("amt")) { $("amt").value = q.get("amt"); $("slider").value = toSlider(+q.get("amt")); }
-renderCats(); renderQuick(); renderList(); cheatSheet(); guide();
-if (!S.owned.length) show("setup"); else if ($("amt").value) compare(false);
+renderCats(); renderQuick(); renderCards(); showGuide(false); compare(false); sizeDock();
+addEventListener("resize", sizeDock);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
