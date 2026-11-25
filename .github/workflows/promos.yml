@@ -24,8 +24,8 @@ jobs:
         run: node scripts/fetch-promos.mjs
       - name: Commit promos.json if it changed
         run: |
-          git config user.name "kaskas-bot"
-          git config user.email "kaskas-bot@users.noreply.github.com"
+          git config user.name "sulitswipe-bot"
+          git config user.email "sulitswipe-bot@users.noreply.github.com"
           git add promos.json
           git diff --cached --quiet || (git commit -m "Update promos $(date -u +%F)" && git push)
       - name: Flag banks that returned no promos

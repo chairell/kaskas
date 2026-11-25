@@ -15,7 +15,7 @@ const SOURCES = [bpi, metrobank, rcbc, eastwest, maya];
 // Not covered: BDO (its deals app loads promos through a login-gated API), PNB and UnionBank
 // (their sites refuse automated requests), MariBank (no promo page).
 const OUT = new URL("../promos.json", import.meta.url);
-const UA = "Mozilla/5.0 (compatible; KaskasPromoBot/1.0; +https://github.com/chairell/kaskas)";
+const UA = "Mozilla/5.0 (compatible; SulitSwipePromoBot/1.0; +https://github.com/chairell/sulitswipe)";
 
 async function get(url) {
   const r = await fetch(url, { headers: { "user-agent": UA, "accept": "text/html" }, signal: AbortSignal.timeout(30000) });

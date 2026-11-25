@@ -1,6 +1,6 @@
 {
-  "name": "Kaskas!",
-  "short_name": "Kaskas!",
+  "name": "Sulit Swipe",
+  "short_name": "Sulit Swipe",
   "description": "Find out which of your credit cards earns the most rewards.",
   "start_url": "./",
   "display": "standalone",

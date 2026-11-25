@@ -13,7 +13,7 @@ jobs:
       - name: Download pages
         run: |
           mkdir pages
-          UA="Mozilla/5.0 (compatible; KaskasPromoBot/1.0; +https://github.com/chairell/kaskas)"
+          UA="Mozilla/5.0 (compatible; SulitSwipePromoBot/1.0; +https://github.com/chairell/sulitswipe)"
           while read name url; do
             curl -sSL -m 30 -A "$UA" -o "pages/$name.html" -w "$name %{http_code} %{size_download}\n" "$url" || echo "$name failed"
           done <<'LIST'
@@ -36,6 +36,6 @@ jobs:
         run: |
           cd pages
           git init -q -b snapshots
-          git config user.name "kaskas-bot"; git config user.email "kaskas-bot@users.noreply.github.com"
+          git config user.name "sulitswipe-bot"; git config user.email "sulitswipe-bot@users.noreply.github.com"
           git add -A && git commit -q -m "Snapshot $(date -u +%FT%TZ)"
           git push -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" snapshots

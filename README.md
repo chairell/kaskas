@@ -1,8 +1,10 @@
-# Kaskas!
+# Sulit Swipe
 
 **Which card should you swipe?** A mobile web app that tells you which of *your* credit cards earns the most rewards on the purchase you're about to make.
 
-Live: https://chairell.github.io/kaskas/
+Live: https://chairell.github.io/sulitswipe/
+
+*Formerly Kaskas!*
 
 ## What it does
 - **Three tabs**: Compare, My cards and Settings, with a bottom tab bar, dark mode and native-style touch behaviour.

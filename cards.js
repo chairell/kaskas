@@ -1,4 +1,4 @@
-// Kaskas! card data — compiled from bank websites and published terms, checked 2026-11-25.
+// Sulit Swipe card data — compiled from bank websites and published terms, checked 2026-11-25.
 // Rates change often. Every card lists its source; verify before relying on a ranking.
 //
 // Card types

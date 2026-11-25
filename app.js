@@ -1,4 +1,5 @@
 let S;
+// Storage key kept from the app's first name (Kaskas!) so existing wallets carry over.
 try { S = JSON.parse(localStorage.kaskas || "null"); } catch (e) { S = null; }
 S = Object.assign({ owned: [], cat: "Dining", merch: "", amts: [], guide: 0, mileVal: 0.5, prog: "", conds: {}, picks: {} }, S || {});
 S.picks = S.picks || {};
@@ -38,7 +39,7 @@ function setAmt(a) { setAmtBox(a); $("slider").value = toSlider(a); compare(true
 
 
 // ── Navigation ──
-const TITLES = { compare: ["Kaskas!", "Which card should you swipe?"], cards: ["My cards", "Turn on the cards in your wallet"], settings: ["Settings", ""] };
+const TITLES = { compare: ["Sulit Swipe", "Which card should you swipe?"], cards: ["My cards", "Add the cards in your wallet"], settings: ["Settings", ""] };
 let tab = "compare";
 function go(t) {
   if (t == tab) { window.scrollTo({ top: 0, behavior: "smooth" }); return; }
@@ -256,18 +257,18 @@ function doShare(d) {
   if (navigator.share) navigator.share(d).catch(() => {});
   else navigator.clipboard.writeText(`${d.text} ${d.url}`).then(() => toast("Link copied"));
 }
-function shareApp() { doShare({ title: "Kaskas!", text: "Find out which of your cards earns the most on every purchase:", url: baseUrl() }); }
+function shareApp() { doShare({ title: "Sulit Swipe", text: "Find out which of your cards earns the most on every purchase:", url: baseUrl() }); }
 function shareResult() {
   const { r, a } = window._last, w = r[0];
-  doShare({ title: "Kaskas!", text: `${w.c.name} got me ${pct(w.value, a)} back on ${S.cat.toLowerCase()}. Which of your cards wins?`,
+  doShare({ title: "Sulit Swipe", text: `${w.c.name} got me ${pct(w.value, a)} back on ${S.cat.toLowerCase()}. Which of your cards wins?`,
     url: `${baseUrl()}?cat=${encodeURIComponent(S.cat)}&amt=${a}` });
 }
 function showGuide(force) {
   const installed = matchMedia("(display-mode: standalone)").matches || navigator.standalone;
   if (!force && (S.guide || installed)) { $("guide").innerHTML = ""; return; }
-  if (force && installed) return toast("Kaskas! is already on your home screen 🎉");
+  if (force && installed) return toast("Sulit Swipe is already on your home screen 🎉");
   const ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  $("guide").innerHTML = `<div class="card"><b>📲 Add Kaskas! to your home screen</b><p class="small">${ios
+  $("guide").innerHTML = `<div class="card"><b>📲 Add Sulit Swipe to your home screen</b><p class="small">${ios
     ? "In Safari, tap the Share button (the square with an arrow), then choose “Add to Home Screen”."
     : "In Chrome, tap the ⋮ menu, then “Add to Home screen” or “Install app”."}</p><button class="btn plain" onclick="dismissGuide()">Got it</button></div>`;
   if (force) go("compare");
