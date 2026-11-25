@@ -76,6 +76,10 @@ details.rowd summary{list-style:none}
 details.cheat summary{list-style:none;font-weight:800;font-size:16px;min-height:28px}
 details.cheat summary::after{content:"›";float:right;color:var(--mut);transition:transform .2s}details.cheat[open] summary::after{transform:rotate(90deg)}
 
+.promo{display:block;border-top:.5px solid var(--line);padding:11px 0;text-decoration:none;color:var(--ink)}.promo:first-of-type{border-top:0}
+.promo b{display:block;font-size:15px}.promo .small b{display:inline;font-size:13px;color:var(--warn)}
+details.allp summary{font-weight:700;font-size:15px;color:var(--hot);min-height:32px;list-style:none;margin-top:6px}details.allp summary::-webkit-details-marker{display:none}
+
 /* Bottom dock (thumb zone) */
 .dock{position:fixed;left:0;right:0;bottom:calc(var(--tab-h) + var(--safe-b));z-index:6;background:var(--bar);
   -webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);border-top:.5px solid var(--line);padding:10px 0 6px}
@@ -142,6 +146,7 @@ body:not(.c) .dock{display:none}
 <main id="v-compare" class="view active">
   <div id="guide"></div>
   <div id="results"></div>
+  <div id="promos"></div>
   <div id="cheatWrap"></div>
 </main>
 
@@ -164,7 +169,7 @@ body:not(.c) .dock{display:none}
     <button class="row" style="width:100%;text-align:left;color:#e5484d" onclick="resetCards()"><div class="lbl">Clear my cards</div></button>
   </div>
   <div class="sect">About the rates</div>
-  <div class="group"><div class="row"><div class="lbl" style="font-size:14px">Rates come from each bank's website and published terms, checked Nov 25, 2026. They change often and promos aren't included, so check the bank's current terms before relying on a result. Each result links to its source.</div></div>
+  <div class="group"><div class="row"><div class="lbl" style="font-size:14px">Rates come from each bank's website and published terms, checked Nov 25, 2026. Promos are pulled from bank websites daily and listed separately. Rates change often, so check the bank's current terms before relying on a result. Each result links to its source.</div></div>
     <a class="row" href="https://github.com/chairell/kaskas" target="_blank" rel="noopener" style="text-decoration:none;color:inherit"><div class="lbl">Card data on GitHub</div><span class="chev">›</span></a></div>
 </main>
 

@@ -169,7 +169,7 @@ const breakdown = (x, a) => `<table><tr><td>Earn</td><td>${esc(x.earned)}</td></
 function compare(final) {
   const a = +$("amt").value;
   const mine = CARDS.filter(c => S.owned.includes(c.id));
-  cheatSheet(mine, !a);
+  cheatSheet(mine, !a); renderPromos();
   if (!mine.length) {
     $("results").innerHTML = `<div class="card empty"><div class="big">💳</div><h2>Add your cards first</h2>
       <p class="small">Turn on the cards in your wallet. They stay saved on this phone.</p><button class="btn primary" onclick="go('cards')">Choose my cards</button></div>`;
@@ -229,6 +229,33 @@ function showGuide(force) {
   if (force) go("compare");
 }
 function dismissGuide() { S.guide = 1; save(); $("guide").innerHTML = ""; }
+
+
+// ── Promos ── promos.json is refreshed daily by a scheduled job (scripts/fetch-promos.mjs).
+let PROMOS = [];
+const todayPH = () => new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 10);
+const GENERIC = /^(view details|learn more|read more|details|see more)$/i;
+// Some scrapers save the link text ("View details") as the title; fall back to the page's address.
+const promoTitle = p => !p.title || GENERIC.test(p.title.trim())
+  ? decodeURIComponent(p.url.split(/[?#]/)[0].replace(/\/+$/, "").split("/").pop()).replace(/[-_]+/g, " ").replace(/\b\w/g, ch => ch.toUpperCase())
+  : p.title;
+function renderPromos() {
+  const el = $("promos"), banks = new Set(CARDS.filter(c => S.owned.includes(c.id)).map(c => c.bank)), t = todayPH();
+  const live = PROMOS.filter(p => banks.has(p.bank) && (!p.validUntil || p.validUntil >= t));
+  const here = live.filter(p => p.category == S.cat);
+  if (!live.length) { el.innerHTML = ""; return; }
+  const row = p => {
+    const days = p.validUntil ? Math.round((new Date(p.validUntil) - new Date(t)) / 864e5) : null;
+    const when = days == null ? "" : days <= 7 ? ` · <b>${days ? `ends in ${days} day${days > 1 ? "s" : ""}` : "ends today"}</b>`
+      : ` · until ${new Date(p.validUntil).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}`;
+    return `<a class="promo" href="${esc(p.url)}" target="_blank" rel="noopener"><b>${esc(promoTitle(p))}</b><span class="small">${esc(p.bank)}${p.cards == "credit+debit" ? " credit &amp; debit" : " credit cards"}${when}</span></a>`;
+  };
+  el.innerHTML = `<div class="sect">🎁 Promos for your cards</div><div class="card">
+    ${here.length ? `<p class="small" style="margin-top:0">${esc(S.cat)} promos from your banks. These can beat the points above, so check the terms.</p>${here.map(row).join("")}`
+      : `<p class="small" style="margin:0">No ${esc(S.cat.toLowerCase())} promos from your banks right now.</p>`}
+    ${live.length > here.length ? `<details class="allp"><summary>All ${live.length} promos from your banks ›</summary>${live.map(row).join("")}</details>` : ""}</div>`;
+}
+fetch("promos.json").then(r => r.json()).then(d => { PROMOS = d.promos || []; renderPromos(); }).catch(() => {});
 
 const q = new URLSearchParams(location.search);
 if (q.get("cat") && CATS.includes(q.get("cat"))) S.cat = q.get("cat");

@@ -1,0 +1,35 @@
+name: Update promos
+
+on:
+  schedule:
+    - cron: "17 21 * * *"   # daily, 5:17 AM Manila time
+  workflow_dispatch:         # "Run workflow" button in the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Test parsers
+        run: node scripts/test-parsers.mjs
+      - name: Fetch promos
+        id: fetch
+        continue-on-error: true   # still commit what we got; the job is marked failed below
+        run: node scripts/fetch-promos.mjs
+      - name: Commit promos.json if it changed
+        run: |
+          git config user.name "kaskas-bot"
+          git config user.email "kaskas-bot@users.noreply.github.com"
+          git add promos.json
+          git diff --cached --quiet || (git commit -m "Update promos $(date -u +%F)" && git push)
+      - name: Flag banks that returned no promos
+        if: steps.fetch.outcome == 'failure'
+        run: |
+          echo "::error::A bank returned no promos. Its page may have changed. See the Fetch promos step."
+          exit 1
