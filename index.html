@@ -131,12 +131,17 @@ input[type=range]{display:block;width:calc(100% - 32px);margin:12px 16px 2px;hei
 .switch i::after{content:"";position:absolute;left:2px;top:2px;width:27px;height:27px;border-radius:50%;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.25);transition:transform .2s}
 .switch input:checked+i{background:#34c759}.switch input:checked+i::after{transform:translateX(20px)}
 .switch.sm{width:42px;height:26px}.switch.sm i::after{width:22px;height:22px}.switch.sm input:checked+i::after{transform:translateX(16px)}
+.wbtn{flex:none;min-height:34px;padding:6px 14px;border-radius:999px;border:0;font-size:14px;font-weight:700}
+.wbtn.add{background:var(--fill);color:var(--hot)}
+.wbtn.rm{background:none;color:var(--mut);padding:6px 4px}
 .valin{width:90px;text-align:right;border:0;outline:0;background:var(--fill);border-radius:10px;padding:8px 10px;font-size:16px;font-weight:700}
 .chev{color:var(--mut);font-size:20px}
 
 #toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-b) + 16px);transform:translate(-50%,20px);opacity:0;z-index:9;
   background:var(--ink);color:var(--bg);padding:11px 16px;border-radius:14px;font-size:14px;font-weight:600;max-width:90%;transition:.25s;pointer-events:none;text-align:center}
 #toast.show{opacity:1;transform:translate(-50%,0)}
+#toast.act{pointer-events:auto;display:flex;align-items:center;gap:14px}
+#toast button{border:0;background:none;color:var(--sun);font-weight:800;font-size:14px;padding:4px 0;font-family:inherit}
 body.c #toast{bottom:calc(var(--tab-h) + var(--safe-b) + var(--dock-h,210px) + 10px)}
 body:not(.c) .dock{display:none}
 </style></head><body class="c">

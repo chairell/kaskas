@@ -31,7 +31,7 @@ function go(t) {
   for (const v of ["compare", "cards", "settings"]) { $("v-" + v).classList.toggle("active", v == t); $("t-" + v).classList.toggle("on", v == t); }
   document.body.classList.toggle("c", t == "compare");
   $("title").textContent = TITLES[t][0]; $("title").classList.toggle("brand", t == "compare");
-  $("subtitle").textContent = t == "cards" ? `${S.owned.length} of ${CARDS.length} cards on` : TITLES[t][1];
+  $("subtitle").textContent = t == "cards" ? `${S.owned.length} card${S.owned.length == 1 ? "" : "s"} in your wallet` : TITLES[t][1];
   if (t == "compare") { compare(false); }
   if (t == "cards") renderCards();
   if (t == "settings") $("mileVal").value = S.mileVal;
@@ -40,7 +40,14 @@ function go(t) {
 }
 function sizeDock() { document.documentElement.style.setProperty("--dock-h", $("dock").offsetHeight + "px"); }
 let toastT;
-function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), 2600); }
+// Optional action button, e.g. toast("Removed", "Undo", () => ...).
+function toast(t, label, fn) {
+  const el = $("toast");
+  el.textContent = t;
+  if (label) { const b = document.createElement("button"); b.textContent = label; b.onclick = () => { el.classList.remove("show"); fn(); }; el.append(b); }
+  el.classList.toggle("act", !!label); el.classList.add("show");
+  clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove("show"), label ? 5000 : 2600);
+}
 
 // ── Compare dock ──
 const ICON = { Dining: "🍽️", Groceries: "🛒", Drugstore: "💊", Fuel: "⛽", Shopping: "🛍️", Online: "📦", Transport: "🚕", Travel: "✈️", Overseas: "🌏", Bills: "🧾", Other: "💳" };
@@ -67,7 +74,8 @@ function cardRow(c, withOpts) {
   const on = S.owned.includes(c.id);
   return `<div class="item"><div class="row"><span class="dot" style="background:${BANK_COLOR[c.bank] || "#999"}"></span>
     <div class="lbl">${esc(c.name)}<small>${esc(c.bank)} · ${c.type == "cash" ? "Cashback" : c.type == "miles" ? "Airline miles" : "Points"}</small></div>
-    ${sw(on, `toggle('${c.id}')`)}</div>${withOpts && on ? cardOptions(c) : ""}</div>`;
+    ${on ? `<button class="wbtn rm" onclick="removeCard('${c.id}')" aria-label="Remove ${esc(c.name)} from your wallet">Remove</button>`
+         : `<button class="wbtn add" onclick="addCard('${c.id}')" aria-label="Add ${esc(c.name)} to your wallet">＋ Add</button>`}</div>${withOpts && on ? cardOptions(c) : ""}</div>`;
 }
 function renderCards() {
   const q = $("q").value.trim().toLowerCase();
@@ -82,14 +90,19 @@ function renderCards() {
   if (!h) h = `<div class="empty"><div class="big">🔍</div><h2>No cards found</h2><p class="small">Try a bank name like "BPI" or a card like "Platinum".</p></div>`;
   $("cardsList").innerHTML = h;
   $("ownedCount").textContent = S.owned.length || "";
-  if (tab == "cards") $("subtitle").textContent = `${S.owned.length} of ${CARDS.length} cards on`;
+  if (tab == "cards") $("subtitle").textContent = `${S.owned.length} card${S.owned.length == 1 ? "" : "s"} in your wallet`;
 }
-function toggle(id) {
-  const on = !S.owned.includes(id);
-  S.owned = on ? [...S.owned, id] : S.owned.filter(x => x != id); save();
-  // let the switch animate before the card moves between sections
-  setTimeout(renderCards, 220);
-  toast(on ? "Added to your wallet" : "Removed from your wallet");
+function addCard(id) {
+  if (!S.owned.includes(id)) S.owned = [...S.owned, id];
+  save(); renderCards();
+  toast(`${CARDS.find(c => c.id == id).name} added to your wallet`);
+}
+function removeCard(id) {
+  const i = S.owned.indexOf(id); if (i < 0) return;
+  S.owned = S.owned.filter(x => x != id); save(); renderCards();
+  toast(`${CARDS.find(c => c.id == id).name} removed`, "Undo", () => {
+    if (!S.owned.includes(id)) { S.owned.splice(Math.min(i, S.owned.length), 0, id); save(); renderCards(); }
+  });
 }
 function picks(c) { return S.picks[c.id] || c.choose.def; }
 function togglePick(id, opt) {
