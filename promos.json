@@ -3,98 +3,422 @@
  "sources": {
   "BPI": {
    "ok": true,
-   "count": 10
+   "count": 46
   }
  },
  "promos": [
   {
-   "id": "bpi-lazada-payday-sale-promo",
+   "id": "bpi-bpi-to-cash-x-m-lhuillier-cash-to-karats-holiday-promo",
    "bank": "BPI",
-   "title": "Lazada: Payday Sale Promo",
-   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/lazada-payday-sale-promo",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/bpi-to-cash-x-m-lhuillier-cash-to-karats-holiday-promo",
+   "validUntil": "2026-11-29",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-montesa-medical-group-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/montesa-medical-group-promo",
    "validUntil": "2026-11-30",
    "cards": "credit",
-   "category": "Online"
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-punong-puno-ng-saya-dahil-half-the-price",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/punong-puno-ng-saya-dahil-half-the-price",
+   "validUntil": "2026-11-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-taco-bout-good-vybes",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/taco-bout-good-vybes",
+   "validUntil": "2026-11-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-rewards-for-every-mamas-cart",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/rewards-for-every-mamas-cart",
+   "validUntil": "2026-11-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-masaya-ang-holiday-shopping-kasama-ang-vybe-and-toys-r-us",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/masaya-ang-holiday-shopping-kasama-ang-vybe-and-toys-r-us",
+   "validUntil": "2026-11-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-sari-sari-ang-saya-kasama-ang-vybe",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/sari-sari-ang-saya-kasama-ang-vybe",
+   "validUntil": "2026-11-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-jumpstart-event",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/jumpstart-event",
+   "validUntil": "2026-11-30",
+   "cards": "credit",
+   "category": "Shopping"
   },
   {
    "id": "bpi-swm-promo",
    "bank": "BPI",
-   "title": "SWM Promo",
+   "title": "View details",
    "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/swm-promo",
    "validUntil": "2026-12-13",
    "cards": "credit",
    "category": "Shopping"
   },
   {
-   "id": "bpi-our-home-promo",
-   "bank": "BPI",
-   "title": "Our Home Promo",
-   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/our-home-promo",
-   "validUntil": "2026-12-14",
-   "cards": "credit+debit",
-   "category": "Shopping"
-  },
-  {
-   "id": "bpi-linden-teak-promo",
-   "bank": "BPI",
-   "title": "Linden Teak Promo",
-   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/linden-teak-promo",
-   "validUntil": "2026-12-31",
-   "cards": "credit+debit",
-   "category": "Shopping"
-  },
-  {
-   "id": "bpi-leblanc-hotel-and-resort-promo",
-   "bank": "BPI",
-   "title": "LeBlanc Hotel and Resort Promo",
-   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/leblanc-hotel-and-resort-promo",
-   "validUntil": "2027-01-14",
-   "cards": "credit+debit",
-   "category": "Travel"
-  },
-  {
    "id": "bpi-the-notebook-the-musical-promo",
    "bank": "BPI",
-   "title": "The Notebook: The Musical Promo",
+   "title": "View details",
    "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/the-notebook-the-musical-promo",
-   "validUntil": "2027-02-21",
-   "cards": "credit+debit",
+   "validUntil": "2026-12-14",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-brique-modern-kitchen-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/brique-modern-kitchen-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
    "category": "Shopping"
   },
   {
    "id": "bpi-jewelmer-promo",
    "bank": "BPI",
-   "title": "Jewelmer Promo",
+   "title": "View details",
    "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/jewelmer-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-cool-treats-and-great-vybes",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/cool-treats-and-great-vybes",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-pretzel-perfect-vybe",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/pretzel-perfect-vybe",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-more-rides-more-rewards-on-bpi-175th-anniversary",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/more-rides-more-rewards-on-bpi-175th-anniversary",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-better-together-bundles",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/better-together-bundles",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-bpi-motorcycle-loan-gcash-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/bpi-motorcycle-loan-gcash-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-bpi-auto-loan-partner-exclusive",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/bpi-auto-loan-partner-exclusive",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-housing-loan-dream-more-deals-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/housing-loan-dream-more-deals-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-auto-loan-dream-more-deals-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/auto-loan-dream-more-deals-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-big-bike-motorcycle-loan-dream-more-deals-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/big-bike-motorcycle-loan-dream-more-deals-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-pay-with-bpi-today-win-php-175k-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/pay-with-bpi-today-win-php-175k-promo",
+   "validUntil": "2026-12-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-western-appliance-flexipayzero",
+   "bank": "BPI",
+   "title": "View promotion",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/western-appliance-flexipayzero",
+   "validUntil": "2027-01-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-lazada-payday-sale-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/lazada-payday-sale-promo",
+   "validUntil": "2027-02-21",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-leblanc-hotel-and-resort-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/leblanc-hotel-and-resort-promo",
    "validUntil": "2027-02-28",
-   "cards": "credit+debit",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-linden-teak-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/linden-teak-promo",
+   "validUntil": "2027-02-28",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-saveup-alex-eala-ticket-giveaway",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/saveup-alex-eala-ticket-giveaway",
+   "validUntil": "2027-03-21",
+   "cards": "credit",
    "category": "Shopping"
   },
   {
    "id": "bpi-gap-promo",
    "bank": "BPI",
-   "title": "GAP Promo",
+   "title": "View details",
    "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/gap-promo",
-   "validUntil": "2027-02-28",
-   "cards": "credit+debit",
+   "validUntil": "2027-04-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-our-home-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/our-home-promo",
+   "validUntil": "2027-04-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-shopee-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/shopee-promo",
+   "validUntil": "2027-04-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-motorcycle-loan-dream-more-deals-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/motorcycle-loan-dream-more-deals-promo",
+   "validUntil": "2027-04-30",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-royal-enfield",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/royal-enfield",
+   "validUntil": "2027-04-30",
+   "cards": "credit",
    "category": "Shopping"
   },
   {
    "id": "bpi-capital-promo",
    "bank": "BPI",
-   "title": "Capital Promo",
+   "title": "View details",
    "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/capital-promo",
-   "validUntil": "2027-04-30",
-   "cards": "credit+debit",
+   "validUntil": "2027-05-31",
+   "cards": "credit",
    "category": "Shopping"
   },
   {
-   "id": "bpi-montesa-medical-group-promo",
+   "id": "bpi-beyond-wealth",
    "bank": "BPI",
-   "title": "Montesa Medical Group Promo",
-   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/montesa-medical-group-promo",
-   "validUntil": "2027-05-31",
-   "cards": "credit+debit",
+   "title": "View promotion",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/beyond-wealth",
+   "validUntil": "2027-10-31",
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-visa-exclusive-offers-singapore",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/visa-exclusive-offers-singapore",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-the-generics-pharmacy-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/the-generics-pharmacy-promo",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-kinetix-plus-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/kinetix-plus-promo",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-ang-tahanan-ni-bernada-alba",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/ang-tahanan-ni-bernada-alba",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-bpi-and-finn-app-raffle-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/bpi-and-finn-app-raffle-promo",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-save-and-stream-raffle-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/save-and-stream-raffle-promo",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-may-bpi-dito-first-deposit-offer",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/may-bpi-dito-first-deposit-offer",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-may-bpi-dito-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/may-bpi-dito-promo",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-housing-loan-partner-exclusive",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/housing-loan-partner-exclusive",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-fuso",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/fuso",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-mv-agusta",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/mv-agusta",
+   "validUntil": null,
+   "cards": "credit",
+   "category": "Shopping"
+  },
+  {
+   "id": "bpi-kinsenas-buwenas-payday-promo",
+   "bank": "BPI",
+   "title": "View details",
+   "url": "https://www.bpi.com.ph/personal/rewards-and-promotions/promos/kinsenas-buwenas-payday-promo",
+   "validUntil": null,
+   "cards": "credit",
    "category": "Shopping"
   }
  ]
