@@ -6,8 +6,14 @@
 import { readFile, writeFile } from "node:fs/promises";
 import { categorize, todayPH } from "./lib.mjs";
 import * as bpi from "./sources/bpi.mjs";
+import * as rcbc from "./sources/rcbc.mjs";
+import * as eastwest from "./sources/eastwest.mjs";
+import * as maya from "./sources/maya.mjs";
+import * as metrobank from "./sources/metrobank.mjs";
 
-const SOURCES = [bpi];   // add more banks here: bdo, unionbank, metrobank, ...
+const SOURCES = [bpi, metrobank, rcbc, eastwest, maya];
+// Not covered: BDO (its deals app loads promos through a login-gated API), PNB and UnionBank
+// (their sites refuse automated requests), MariBank (no promo page).
 const OUT = new URL("../promos.json", import.meta.url);
 const UA = "Mozilla/5.0 (compatible; KaskasPromoBot/1.0; +https://github.com/chairell/kaskas)";
 
@@ -26,8 +32,11 @@ let failed = false;
 for (const src of SOURCES) {
   const found = new Map(), errors = [];
   for (const url of src.listUrls) {
-    try { for (const p of src.parse(await get(url))) if (!found.has(p.id)) found.set(p.id, p); }
+    let added = 0;
+    try { for (const p of src.parse(await get(url), url)) if (!found.has(p.id)) { found.set(p.id, p); added++; } }
     catch (e) { errors.push(String(e.message || e)); }
+    if (src.stopWhenNoNew && !added) break;          // ran past the last page
+    await new Promise(r => setTimeout(r, 1000));     // be gentle with the bank's server
   }
   let list = [...found.values()].filter(p => !p.validUntil || p.validUntil >= today);
   if (!list.length) {
@@ -46,6 +55,8 @@ promos.sort((a, b) => (a.validUntil || "9999").localeCompare(b.validUntil || "99
 const next = { updated: today, sources: status, promos };
 // Only rewrite when something other than the date changed, so the job doesn't commit every day for nothing.
 const same = JSON.stringify({ ...prev, updated: 0 }) == JSON.stringify({ ...next, updated: 0 });
-if (!same) await writeFile(OUT, JSON.stringify(next, null, 1) + "\n");
+// One promo per line keeps the file small and the daily diffs readable.
+const text = `{"updated":${JSON.stringify(today)},"sources":${JSON.stringify(status)},"promos":[\n${promos.map(p => JSON.stringify(p)).join(",\n")}\n]}\n`;
+if (!same) await writeFile(OUT, text);
 console.log(same ? "No changes." : `Wrote ${promos.length} promos.`);
 process.exit(failed ? 1 : 0);

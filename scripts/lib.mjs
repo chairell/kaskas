@@ -36,3 +36,31 @@ export function categorize(title) {
   for (const [cat, re] of CAT_WORDS) if (re.test(title)) return cat;
   return "Shopping";
 }
+
+// Latest full date in a block of text, e.g. "June 1 to November 30, 2026" -> "2026-11-30".
+const DATE_RE = /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept?|Oct|Nov|Dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}\b/gi;
+export function lastDate(text) {
+  const ds = (String(text).match(DATE_RE) || []).map(parseDate).filter(Boolean).sort();
+  return ds.length ? ds[ds.length - 1] : null;
+}
+
+// Split a listing page into one chunk per promo card. `marker` matches the start of each card.
+export function cards(html, marker) {
+  const idx = [...html.matchAll(new RegExp(marker.source, marker.flags.replace("g", "") + "g"))].map(m => m.index);
+  return idx.map((start, k) => html.slice(start, idx[k + 1] ?? start + 6000));
+}
+
+// First link in a chunk whose path matches `re` (group 1 = slug). Returns { url, slug, text } or null.
+export function link(chunk, re, pageUrl) {
+  for (const m of chunk.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>([\s\S]*?)<\/a>/gi)) {
+    let u; try { u = new URL(decode(m[1]), pageUrl); } catch { continue; }
+    const path = u.pathname.replace(/\.html$/, "").replace(/\/$/, "");
+    const s = path.match(re);
+    if (s && !u.search) return { url: u.origin + path, slug: s[1], text: clean(m[2]) };
+  }
+  return null;
+}
+
+// Text of the first element matching `re` (group 1), tags stripped.
+export const pick = (chunk, re) => { const m = chunk.match(re); return m ? clean(m[1]) : ""; };
+export const clean = s => decode(stripTags(s)).replace(/\u200b/g, "").replace(/\s+/g, " ").trim();

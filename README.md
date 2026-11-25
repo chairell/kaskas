@@ -23,9 +23,12 @@ Not modelled in the rankings: limited-time promos (they're listed separately), a
 ## Promos
 `promos.json` is updated every day at 5:17 AM Manila time by the **Update promos** GitHub Action (`.github/workflows/promos.yml`). It runs `scripts/fetch-promos.mjs`, which reads each bank's promo pages, drops expired promos and commits the file if anything changed. You can also run it any time from the Actions tab with **Run workflow**.
 
-- Banks covered so far: **BPI**. To add a bank, copy `scripts/sources/bpi.mjs`, adjust the parser, add a sample page to `scripts/fixtures/` with a test in `scripts/test-parsers.mjs`, and list it in `SOURCES`.
+- **Covered:** BPI, Metrobank (from the structured data embedded in its page, including which cards qualify), RCBC, EastWest (all pages) and Maya (featured credit card deals).
+- **Not covered:** BDO (its deals app loads promos through a login-gated API), PNB and UnionBank (their sites refuse automated requests), and MariBank (no promo page).
 - If a bank returns no promos (usually because its page changed), its previous promos are kept and the job is marked failed, so GitHub emails you.
-- Categories are guessed from the promo title, so some land in Shopping by default.
+- RCBC's listing has no end dates, so its promos stay until they disappear from RCBC's page. Categories come from the bank's own tags where it has them (Metrobank, EastWest), otherwise they're guessed from the title, so some land in Shopping.
+
+**Fixing a parser:** run the **Snapshot promo pages** workflow from the Actions tab. It saves each bank's raw page to the `snapshots` branch. Compare it with the parser in `scripts/sources/`, update the trimmed sample in `scripts/fixtures/`, and run `node scripts/test-parsers.mjs`.
 
 ## Run it
 Plain HTML/JS, no build step. Served with GitHub Pages from `main` / root.

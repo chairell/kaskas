@@ -250,12 +250,19 @@ function renderPromos() {
       : ` · until ${new Date(p.validUntil).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" })}`;
     return `<a class="promo" href="${esc(p.url)}" target="_blank" rel="noopener"><b>${esc(promoTitle(p))}</b><span class="small">${esc(p.bank)}${p.cards == "credit+debit" ? " credit &amp; debit" : " credit cards"}${when}</span></a>`;
   };
+  // Ending soonest first (undated last); show 5, the rest behind a tap.
   el.innerHTML = `<div class="sect">🎁 Promos for your cards</div><div class="card">
-    ${here.length ? `<p class="small" style="margin-top:0">${esc(S.cat)} promos from your banks. These can beat the points above, so check the terms.</p>${here.map(row).join("")}`
-      : `<p class="small" style="margin:0">No ${esc(S.cat.toLowerCase())} promos from your banks right now.</p>`}
-    ${live.length > here.length ? `<details class="allp"><summary>All ${live.length} promos from your banks ›</summary>${live.map(row).join("")}</details>` : ""}</div>`;
+    ${here.length ? `<p class="small" style="margin-top:0">${here.length} ${esc(S.cat.toLowerCase())} promo${here.length > 1 ? "s" : ""} from your banks. These can beat the points above, so check the terms.</p>${here.slice(0, 5).map(row).join("")}
+      ${here.length > 5 ? `<details class="allp"><summary>Show ${here.length - 5} more ›</summary>${here.slice(5).map(row).join("")}</details>` : ""}`
+      : `<p class="small" style="margin:0">No ${esc(S.cat.toLowerCase())} promos from your banks right now. Try another category.</p>`}
+    <p class="small" style="margin-bottom:0">${PROMOS_UPDATED ? `Checked ${esc(PROMOS_UPDATED)} from bank websites. ` : ""}Not covered yet: BDO, UnionBank, PNB and MariBank.</p></div>`;
 }
-fetch("promos.json").then(r => r.json()).then(d => { PROMOS = d.promos || []; renderPromos(); }).catch(() => {});
+let PROMOS_UPDATED = "";
+fetch("promos.json").then(r => r.json()).then(d => {
+  PROMOS = d.promos || [];
+  PROMOS_UPDATED = d.updated ? new Date(d.updated).toLocaleDateString("en-PH", { month: "short", day: "numeric" }) : "";
+  renderPromos();
+}).catch(() => {});
 
 const q = new URLSearchParams(location.search);
 if (q.get("cat") && CATS.includes(q.get("cat"))) S.cat = q.get("cat");
